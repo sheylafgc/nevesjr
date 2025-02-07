@@ -83,8 +83,15 @@ export default function Navbar() {
                   />
                 </Button>
               </MenuHandler>
-              <MenuList>
+              <MenuList
+                placeholder=""
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
                 <MenuItem
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
                   onClick={() => router.push("/pages/BookATrip")}
                   className="w-full h-full flex justify-start items-center gap-3"
                 >
@@ -92,6 +99,9 @@ export default function Navbar() {
                   Account
                 </MenuItem>
                 <MenuItem
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
                   onClick={() => router.push("/pages/Internal")}
                   className="flex justify-start items-center gap-3"
                 >
@@ -99,7 +109,12 @@ export default function Navbar() {
                   My trips
                 </MenuItem>
                 <hr className="my-2 border-blue-gray-50" />
-                <MenuItem className="flex justify-start items-center gap-3">
+                <MenuItem
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                  className="flex justify-start items-center gap-3"
+                >
                   <PiSignOutBold size={18} className="text-gray2" />
                   Log out
                 </MenuItem>
@@ -172,8 +187,15 @@ export default function Navbar() {
                     />
                   </Button>
                 </MenuHandler>
-                <MenuList>
+                <MenuList
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
                   <MenuItem
+                    placeholder=""
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
                     onClick={() => router.push("/pages/BookATrip")}
                     className="w-full h-full flex justify-start items-center gap-3"
                   >
@@ -181,6 +203,9 @@ export default function Navbar() {
                     Account
                   </MenuItem>
                   <MenuItem
+                    placeholder=""
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
                     onClick={() => router.push("/pages/Internal")}
                     className="flex justify-start items-center gap-3"
                   >
@@ -188,7 +213,12 @@ export default function Navbar() {
                     My trips
                   </MenuItem>
                   <hr className="my-2 border-blue-gray-50" />
-                  <MenuItem className="flex justify-start items-center gap-3">
+                  <MenuItem
+                    placeholder=""
+                    onPointerEnterCapture={() => {}}
+                    onPointerLeaveCapture={() => {}}
+                    className="flex justify-start items-center gap-3"
+                  >
                     <PiSignOutBold size={18} className="text-gray2" />
                     Log out
                   </MenuItem>

@@ -199,12 +199,18 @@ export default function BookATrip() {
               activeStep={currentStep}
               isLastStep={(value) => setIsLastStep(value)}
               isFirstStep={(value) => setIsFirstStep(value)}
+              placeholder=""
+              onPointerEnterCapture={() => {}}
+              onPointerLeaveCapture={() => {}}
             >
               {steps.map((step, index) => (
                 <Step
                   className=""
                   key={index}
                   onClick={() => areFieldsFilled() && setCurrentStep(index)}
+                  placeholder=""
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
                 >
                   {currentStep > index ? (
                     <>
