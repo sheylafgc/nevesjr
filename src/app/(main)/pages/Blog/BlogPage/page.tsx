@@ -3,11 +3,12 @@ import RelatedPosts from "@/components/RelatedPosts/RelatedPosts";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { FaFacebookF, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 import { FaLink } from "react-icons/fa6";
 import { Bounce, toast } from "react-toastify";
 
-export default function BlogPage() {
+function BlogItem() {
   const searchParams = useSearchParams();
   const blogId: number | null = Number(searchParams.get("blogId"));
   const title: string | null = searchParams.get("title");
@@ -95,5 +96,13 @@ export default function BlogPage() {
       </div>
       <RelatedPosts blogId={blogId} />
     </div>
+  );
+}
+
+export default function BlogPage() {
+  return (
+    <Suspense>
+      <BlogItem />
+    </Suspense>
   );
 }

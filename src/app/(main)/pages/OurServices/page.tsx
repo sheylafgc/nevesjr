@@ -9,9 +9,9 @@ import {
   OurServicesDataProps,
 } from "@/app/constants/OurServices";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { Suspense, useCallback } from "react";
 
-export default function OurServices() {
+function OurServicesItem() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -128,5 +128,13 @@ export default function OurServices() {
 
       <Discover />
     </div>
+  );
+}
+
+export default function OurServices() {
+  return (
+    <Suspense>
+      <OurServicesItem />
+    </Suspense>
   );
 }
