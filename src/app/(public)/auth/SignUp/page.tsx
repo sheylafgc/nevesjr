@@ -141,7 +141,7 @@ export default function SignUpPage() {
                             console.log("Form: ", formValues.title);
                           }}
                         >
-                          <SelectTrigger className="bg-white">
+                          <SelectTrigger className="bg-white lg:py-0 py-7">
                             <SelectValue placeholder="Title" />
                           </SelectTrigger>
                           <SelectContent>
