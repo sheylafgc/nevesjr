@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 "use client";
@@ -6,6 +5,9 @@ import { api } from "@/api/api";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { LoginSchemaType } from "@/app/(public)/auth/Login/LoginSchema";
+import { SignUpSchemaType } from "@/app/(public)/auth/SignUp/SignUpSchema";
+import { Bounce, toast } from "react-toastify";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -13,28 +15,24 @@ type AuthProviderProps = {
 
 type UserProps = {
   id: string;
-  name?: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
+  title: "Mr" | "Ms";
 };
 
-type SignUpProps = {
-  name?: string;
-  email?: string;
-  password?: string;
-  phone?: string;
-};
-
-type SignInProps = {
-  email: string;
-  password: string;
-};
+export type SignUpProps = Pick<
+  SignUpSchemaType,
+  "first_name" | "last_name" | "email" | "password" | "phone" | "title"
+>;
 
 type AuthContextData = {
   user: UserProps | null;
-  signIn: (data: SignInProps) => Promise<void>;
+  signIn: (data: LoginSchemaType) => Promise<void>;
   signUp: (data: SignUpProps) => Promise<void>;
   signOut: () => void;
+  loading: boolean;
 };
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -47,45 +45,106 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const token = Cookies.get("NEVESJR_TOKEN");
   useEffect(() => {
-    api.defaults.headers.Authorization = `Bearer ${token}`;
-    getMyUser();
+    if (token) {
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+      getMyUser();
+    }
   }, [refresh, token]);
 
-  async function signIn({ email, password }: SignInProps) {
+  async function signIn(form: LoginSchemaType) {
     setLoading(true);
     try {
-      const { data } = await api.post("/login", { email, password });
-      api.defaults.headers.Authorization = `Bearer ${data.accessToken}`;
-      Cookies.set("SEGUROBET_TOKEN", data.accessToken, { expires: 1 });
+      const { data } = await api.post("/login/", form);
+      api.defaults.headers.Authorization = `Bearer ${data.access}`;
+      Cookies.set("NEVESJR_TOKEN", data.access, { expires: 1 });
+      toast.success("Login successful", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       setRefresh(!refresh);
-      router.push("/");
+      router.push("/Internal");
     } catch (error) {
-      console.log(error);
-      throw error;
+      let errorMessage = "Ocorreu um erro inesperado.";
+
+      if (
+        error instanceof Error &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response
+      ) {
+        errorMessage =
+          (error.response as { data: { detail?: string } }).data.detail ||
+          errorMessage;
+      } else {
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setLoading(false);
     }
   }
 
-  async function signUp({ name, email, password, phone }: SignUpProps) {
+  async function signUp(form: SignUpProps) {
     try {
-      await api.patch("/users/register", {
-        name,
-        email,
-        password,
-        phone,
+      await api.post("/user/create", form, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      router.push("/auth/login");
+      toast.success("account successfully created", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      router.push("/auth/Login");
     } catch (error) {
       console.log(error);
-      throw error;
+      toast.error("An error occurred", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   }
 
   async function getMyUser() {
     try {
       if (token) {
-        const { data } = await api.get<UserProps>("/users/profile");
+        const { data } = await api.get<UserProps>("/user/profile");
+        console.log(data);
         setUser(data);
       }
     } catch (error) {
@@ -97,10 +156,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setUser(null);
       Cookies.remove("NEVESJR_TOKEN");
-      router.push("auth/login");
+      router.push("/");
     } catch (error) {
       console.log(error);
-      throw error;
+      toast.error("An error occurred", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   }
 
@@ -111,6 +180,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signIn,
         signUp,
         signOut,
+        loading,
       }}
     >
       {children}

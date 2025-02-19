@@ -4,14 +4,13 @@ import Footer from "./Footer";
 
 export default function FooterLayout() {
   const pathname = usePathname();
-  const pathsToCheck = ["/pages/BookATrip", "/pages/Internal"];
+  const isNotAuthPath = !pathname.includes("/auth");
+  const pathsToCheck = ["/BookATrip", "/Internal"];
   const isFooterLoggedNeeded = pathsToCheck.some((path) =>
     pathname.includes(path)
   );
-  const FooterComponent = isFooterLoggedNeeded ? (
-    <Footer isLogged />
-  ) : (
-    <Footer />
-  );
+  const FooterComponent =
+    isNotAuthPath && (isFooterLoggedNeeded ? <Footer isLogged /> : <Footer />);
+
   return FooterComponent;
 }

@@ -31,10 +31,10 @@ type addBlogProps = {
 type BlogContextData = {
   blog: BlogProps[] | null;
   loading: boolean;
-  getBlogs: (id?: string) => Promise<void>;
+  getBlogs: (id?: number) => Promise<BlogProps[] | undefined>;
   addBlog: (data: addBlogProps) => Promise<void>;
   editBlog: (data: editBlogProps) => Promise<void>;
-  removeBlog: (id: string) => Promise<void>;
+  removeBlog: (id: number) => Promise<void>;
 };
 
 export const BlogContext = createContext({} as BlogContextData);
@@ -43,11 +43,12 @@ export function BlogProvider({ children }: BlogProviderProps) {
   const [blog, setBlog] = useState<BlogProps[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function getBlogs(id?: string) {
+  async function getBlogs(id?: number) {
     try {
       setLoading(true);
-      const { data } = await api.get<BlogProps[]>(`/blog${id && `/${id}`}`);
+      const { data } = await api.get<BlogProps[]>(`/blog${id ? `/${id}` : ""}`);
       setBlog(data);
+      return data;
     } catch (error) {
       console.error(error);
     } finally {
@@ -55,12 +56,10 @@ export function BlogProvider({ children }: BlogProviderProps) {
     }
   }
 
-  async function addBlog(data: addBlogProps) {
+  async function addBlog(form: addBlogProps) {
     try {
       setLoading(true);
-      await api.post("/blogs/create", {
-        data,
-      });
+      await api.post("/blog/create", form);
     } catch (error) {
       console.error(error);
     } finally {
@@ -81,7 +80,7 @@ export function BlogProvider({ children }: BlogProviderProps) {
     }
   }
 
-  async function removeBlog(id: string) {
+  async function removeBlog(id: number) {
     try {
       setLoading(true);
       await api.delete(`/blog/delete/${id}`);

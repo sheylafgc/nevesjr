@@ -36,7 +36,7 @@ export default function DataTable<TData, TValue>({
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="w-full flex flex-row justify-between items-center py-5">
-        <Link href={"/pages/BookATrip"}>
+        <Link href={"/BookATrip"}>
           <button className="px-8 py-3 text-xs text-white bg-black rounded-full hover:opacity-85">
             Book new trip
           </button>

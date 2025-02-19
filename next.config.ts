@@ -10,6 +10,19 @@ const nextConfig: NextConfig = {
       {
         pathname: "./src/brand/**",
       },
+      {
+        pathname: "/media/**",
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname:
+          process.env.NEXT_PUBLIC_CONFIG_IMAGE_URL || "default.hostname.com",
+        port: "",
+        pathname: "/media/**",
+        search: "",
+      },
     ],
   },
 };

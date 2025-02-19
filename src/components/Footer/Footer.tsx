@@ -52,15 +52,11 @@ export default function Footer({ isLogged }: FooterProps) {
               <h1 className="font-bold text-gray1">Quick links</h1>
               <div className="flex lg:flex-row flex-col lg:items-center items-start gap-10">
                 <NavLink isFooter href="/" title="Home" />
-                <NavLink
-                  isFooter
-                  href="/pages/OurServices"
-                  title="Our services"
-                />
-                <NavLink isFooter href="#" title="About" />
-                <NavLink isFooter href="#" title="Contact" />
-                <NavLink isFooter href="#" title="SignIn" />
-                <NavLink isFooter href="#" title="Blog" />
+                <NavLink isFooter href="/OurServices" title="Our services" />
+                <NavLink isFooter href="/About" title="About" />
+                <NavLink isFooter href="/Contact" title="Contact" />
+                <NavLink isFooter href="/Blog" title="Blog" />
+                <NavLink isFooter href="/auth/Login" title="SignIn" />
               </div>
             </div>
             <div className="lg:hidden h-[1px] bg-gray1/50 w-full" />

@@ -13,7 +13,7 @@ export default function BeAPartner() {
           </h1>
           <div className="w-full">
             <Button
-              onClick={() => router.push("/pages/Contact/BecomeAPartner")}
+              onClick={() => router.push("/Contact/BecomeAPartner")}
               className="lg:w-auto w-full rounded-full px-8 lg:mt-0 mt-5 lg:py-0 py-5 bg-gray2 lg:px-10 hover:bg-gray1 hover:text-black"
             >
               See more

@@ -14,7 +14,10 @@ export default function Discover({ isInService }: DiscoverProps) {
       <h1 className="text-lg lg:text-xl font-ppMonument text-gray1 text-center lg:text-left">
         Discover the difference <br /> with NevesJR
       </h1>
-      <Button className="rounded-full px-8 lg:px-10 hover:bg-gray1 hover:text-black">
+      <Button
+        onClick={() => router.push("/BookATrip")}
+        className="rounded-full px-8 lg:px-10 hover:bg-gray1 hover:text-black"
+      >
         Book now
       </Button>
     </div>
@@ -27,7 +30,7 @@ export default function Discover({ isInService }: DiscoverProps) {
           </h1>
           <div className="w-full">
             <Button
-              onClick={() => router.push("/pages/BookATrip")}
+              onClick={() => router.push("/BookATrip")}
               className="lg:w-auto w-full rounded-full px-8 lg:px-10 lg:py-0 py-5 hover:bg-gray1 hover:text-black"
             >
               Book now
