@@ -3,12 +3,15 @@ import { z } from "zod";
 export const BookATripSchema = z.object({
   from: z.string().min(1, "Very short from").max(60, "Very long from"),
   to: z.string().min(1, "Very short to").max(60, "Very long to"),
+  isDuration: z.boolean(),
+  duration: z.string().min(1, "Very short to").max(60, "Very long to"),
   date: z.string().min(1, "Very short date").max(60, "Very long date"),
   hour: z.string().min(1, "Very short hour").max(60, "Very long hour"),
   car_class: z
     .string()
     .min(1, "Very short carClass")
     .max(60, "Very long carClass"),
+  price: z.number().min(0, "Price must be greater than 0"),
   booking_for: z.enum(["myself", "someoneElse"], {
     required_error: "Please select an option",
   }),

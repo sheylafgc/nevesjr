@@ -1,6 +1,6 @@
 import { api } from "@/api/api";
 
-type VehicleProps = {
+export type VehicleProps = {
   id: number;
   car_name: string;
   car_type: string;

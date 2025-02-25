@@ -38,8 +38,8 @@ export default function Contact() {
 
   return (
     <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-gray4 to-black lg:bg-gradient-to-l lg:from-black lg:to-gray4">
-      <div className="lg:w-[80%] w-[90%] lg:h-screen flex flex-col lg:flex-row justify-center items-center py-40 gap-4">
-        <div className="hidden flex-[6] h-full lg:flex flex-col justify-center items-center">
+      <div className="lg:w-[80%] w-[90%] flex flex-col lg:flex-row justify-center items-center py-40 gap-4">
+        <div className="hidden flex-[6] h-auto lg:flex flex-col justify-between items-center">
           <Image
             width={700}
             height={600}
@@ -104,7 +104,7 @@ export default function Contact() {
           className="w-full rounded-xl lg:hidden block h-full object-cover"
         />
 
-        <div className="lg:flex-[4] h-full bg-gray4 rounded-xl gap-10 p-14 flex flex-col justify-center">
+        <div className="lg:flex-[4] bg-gray4 rounded-xl gap-10 p-14 flex-col justify-center items-center">
           <h1 className="font-ppMonument text-3xl text-gray1 leading-s50">
             Have a <br /> sugestion or <br /> a problem?
           </h1>

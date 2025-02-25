@@ -67,7 +67,7 @@ export default function SignUpPage() {
     form.reset();
   };
   return (
-    <div className="w-full lg:h-screen flex justify-center items-center lg:bg-white bg-white2 py-10">
+    <div className="w-full h-auto py-32 flex justify-center items-center lg:bg-white bg-white2">
       <div className=" lg:w-auto w-full justify-center items-center flex flex-col lg:bg-white2 px-40 py-10 rounded-xl lg:shadow-md">
         <div className="flex flex-col justify-between items-center gap-10 ">
           <h1 className="font-ppMonument text-3xl text-black">Sign Up</h1>
@@ -141,7 +141,7 @@ export default function SignUpPage() {
                             console.log("Form: ", formValues.title);
                           }}
                         >
-                          <SelectTrigger className="bg-white">
+                          <SelectTrigger className="bg-white lg:py-0 py-7">
                             <SelectValue placeholder="Title" />
                           </SelectTrigger>
                           <SelectContent>

@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading/Loading";
 import ServicePageComponent from "@/components/ServicePageComponent.tsx/ServicePageComponent";
 import { getOurServices } from "@/domain/OurServices.ts/OurServices";
 import { notFound } from "next/navigation";
@@ -22,7 +23,7 @@ export default async function ServicePage({
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <ServicePageComponent />
     </Suspense>
   );

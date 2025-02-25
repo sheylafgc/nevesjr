@@ -8,7 +8,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { FaFilter } from "react-icons/fa";
 import Image from "next/image";
 import { useInfiniteQuery } from "@tanstack/react-query";
-// import { getBlogs } from "@/domain/Blog/BlogService";
 import { ClipLoader } from "react-spinners";
 import Link from "next/link";
 import { getBlogs } from "@/domain/Blog/BlogService";
@@ -56,7 +55,7 @@ export default function Blog() {
   return (
     <div className="flex flex-col justify-center items-center w-full">
       <div className="w-full flex flex-col justify-center items-center bg-gradient-to-r from-gray4 to-black">
-        <div className="w-[80%] flex justify-center items-center pt-40 pb-20">
+        <div className="lg:w-[80%] w-[90%] flex justify-center items-center pt-40 pb-20">
           <Carousel
             plugins={[
               Autoplay({
@@ -115,7 +114,7 @@ export default function Blog() {
         </div>
       </div>
 
-      <div className="w-[80%] flex flex-col justify-center items-center py-32">
+      <div className="lg:w-[80%] w-[90%] flex flex-col justify-center items-center py-32">
         <div className="w-full flex flex-row justify-between items-center mb-16">
           <h1 className="font-ppMonument text-3xl text-black">Blog</h1>
           <Button

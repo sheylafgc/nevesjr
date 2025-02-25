@@ -32,13 +32,14 @@ export default function LoginForBook() {
 
   async function onSubmit(data: LoginSchemaType) {
     await signIn(data);
+    console.log(data);
   }
   return (
     <div className="w-full justify-center items-center flex flex-col bg-white2 px-16 py-10 rounded-xl">
       <div className="flex flex-col justify-between items-center gap-10">
         {user ? (
           <div className="flex flex-col gap-10 justify-center items-center">
-            <h1 className="font-ppMonument text-3xl text-black">
+            <h1 className="font-ppMonument text-3xl text-black text-center">
               You are already logged in
             </h1>
             <p className="text-sm text-gray2">Move on to the next step!</p>

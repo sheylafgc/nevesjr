@@ -1,6 +1,7 @@
 import { api } from "@/api/api";
 
 type AskedQuestionProps = {
+  id: string;
   question: string;
   answer: string;
 };

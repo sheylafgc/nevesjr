@@ -2,6 +2,13 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { MdWatch } from "react-icons/md";
 
+export type TravelTopInfoProps = {
+  from?: string;
+  to?: string;
+  date?: string;
+  hour?: string;
+};
+
 export default function TravelTopInfo() {
   return (
     <div className="w-full bg-white2 flex rounded-xl flex-col justify-between items-start p-10 space-y-3">

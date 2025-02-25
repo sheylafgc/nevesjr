@@ -1,4 +1,5 @@
 import BlogPageComponent from "@/components/BlogPageComponent/BlogPageComponent";
+import Loading from "@/components/Loading/Loading";
 import { getBlogs } from "@/domain/Blog/BlogService";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -22,7 +23,7 @@ export default async function BlogPage({
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <BlogPageComponent />
     </Suspense>
   );

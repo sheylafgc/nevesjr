@@ -27,6 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={monumentFontFamily.variable}>
+      <head>
+        <link
+          rel="shortcut icon"
+          href="nevesjrFavicon.ico"
+          type="image/x-icon"
+        />
+      </head>
       <AuthProvider>
         <BlogProvider>
           <QueryClientProvider client={queryClient}>

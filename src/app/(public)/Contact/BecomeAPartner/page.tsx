@@ -35,7 +35,7 @@ export default function Contact() {
 
   return (
     <div className="w-full flex flex-col justify-center items-center bg-gradient-to-l from-black to-gray4">
-      <div className="lg:w-[80%] w-[90%] lg:h-screen flex flex-col lg:flex-row items-center py-40 gap-4">
+      <div className="lg:w-[80%] w-[90%] lg:h-[1000px] flex flex-col lg:flex-row items-center py-40 gap-4">
         <div className="flex-[6] h-full flex flex-col justify-center items-center">
           <div className="bg-smileyWoman rounded-xl w-full h-[600px] lg:h-full bg-cover bg-center">
             <div className="bg-gradient-to-tr via-60% via-transparent from-black to-transparent rounded-xl w-full h-full flex flex-col justify-end items-start p-10">
