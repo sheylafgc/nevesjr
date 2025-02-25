@@ -50,8 +50,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getVehicles } from "@/domain/Vehicles/Vehicles";
 import Loading from "@/components/Loading/Loading";
 
-import { loadStripe } from "@stripe/stripe-js";
-import convertToSubcurrency from "@/lib/convertToSubcurrency";
+// import { loadStripe } from "@stripe/stripe-js";
+// import convertToSubcurrency from "@/lib/convertToSubcurrency";
 import InputText from "@/components/InputText/InputText";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -108,7 +108,7 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUB_KEY === undefined) {
   throw new Error("NEXT_PUBLIC_STRIPE_PUB_KEY is not defined");
 }
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUB_KEY);
+// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUB_KEY);
 
 function BookATripComponent() {
   const { user } = useContext(AuthContext);
@@ -182,23 +182,19 @@ function BookATripComponent() {
   };
 
   const handleCheckout = async () => {
-    const stripe = await stripePromise;
-
-    const response = await fetch("/api/checkout_sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount: convertToSubcurrency(formValues.price) }),
-    });
-
-    const session = await response.json();
-
-    const result = await stripe?.redirectToCheckout({ sessionId: session.id });
-
-    if (result?.error) {
-      alert(result.error.message);
-    }
+    // const stripe = await stripePromise;
+    // const response = await fetch("/api/checkout_sessions", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ amount: convertToSubcurrency(formValues.price) }),
+    // });
+    // const session = await response.json();
+    // const result = await stripe?.redirectToCheckout({ sessionId: session.id });
+    // if (result?.error) {
+    //   alert(result.error.message);
+    // }
   };
 
   const onSubmit = (data: BookATripSchemaType) => {
