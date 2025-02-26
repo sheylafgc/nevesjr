@@ -596,7 +596,7 @@ function BookATripComponent() {
                                           );
                                           form.setValue(
                                             "price",
-                                            Number(car.price)
+                                            Number(car.price_hour)
                                           );
                                           console.log(
                                             "console watch:",
@@ -633,7 +633,7 @@ function BookATripComponent() {
                                           </span>
                                         </div>
                                         <span className="text-gray2 font-extrabold">
-                                          ${car.price}
+                                          ${car.price_hour}
                                         </span>
                                         <Button className="px-8 border border-gray2 text-sm font-thin rounded-full hover:text-gray1 lg:mt-0 mt-8">
                                           Select
@@ -649,7 +649,7 @@ function BookATripComponent() {
                                           );
                                           form.setValue(
                                             "price",
-                                            Number(car.price)
+                                            Number(car.price_hour)
                                           );
                                           console.log(
                                             "console watch:",
@@ -686,7 +686,7 @@ function BookATripComponent() {
                                           </span>
                                         </div>
                                         <span className="text-gray2 font-extrabold">
-                                          ${car.price}
+                                          ${car.price_hour}
                                         </span>
                                         <Button className="px-8 border border-gray2 rounded-full text-sm font-thin hover:text-gray1 lg:mt-0 mt-8">
                                           Select

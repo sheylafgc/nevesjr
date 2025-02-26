@@ -7,7 +7,8 @@ export type VehicleProps = {
   quantity_seats: string;
   quantity_luggage: string;
   car_image: string;
-  price: string;
+  price_km: string;
+  price_hour: string;
   car_overview: string;
   car_amenities: string;
   car_best_for_services: string;
