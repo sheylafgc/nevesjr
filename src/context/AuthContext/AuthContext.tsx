@@ -144,7 +144,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       if (token) {
         const { data } = await api.get<UserProps>("/user/profile");
-        console.log(data);
         setUser(data);
       }
     } catch (error) {

@@ -49,11 +49,16 @@ import Loading from "@/components/Loading/Loading";
 import TimePicker from "@/components/TimePicker/TimePicker";
 import DurationPicker from "@/components/DurationPicker/DurationPicker";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  useJsApiLoader,
+  Autocomplete,
+  Libraries,
+} from "@react-google-maps/api";
 
 function HomeComponent() {
   const [checked, setChecked] = useState(false);
   const [date, setDate] = useState<Date>();
-  const [selectedTime, setSelectedTime] = useState<string>();
+  const [selectedTime, setSelectedTime] = useState<string>("12:00 AM");
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
   const [selectedDuration, setSelectedDuration] = useState<
@@ -72,6 +77,26 @@ function HomeComponent() {
     },
     [searchParams]
   );
+
+  const [libraries] = useState<Libraries>(["places"]);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  const [searchResultFrom, setSearchResultFrom] =
+    useState<google.maps.places.Autocomplete>();
+
+  const [searchResultTo, setSearchResultTo] =
+    useState<google.maps.places.Autocomplete>();
+
+  function onLoadFrom(autocomplete: google.maps.places.Autocomplete) {
+    setSearchResultFrom(autocomplete);
+  }
+  function onLoadTo(autocomplete: google.maps.places.Autocomplete) {
+    setSearchResultTo(autocomplete);
+  }
 
   function handleRouteSearch() {
     router.push(
@@ -123,6 +148,10 @@ function HomeComponent() {
       queryFn: getAskedQuestions,
     });
 
+  if (!isLoaded) {
+    return <Loading />;
+  }
+
   return (
     <div className="flex flex-col justify-center items-center w-full">
       <div className="w-full bg-frame1 bg-cover bg-center lg:h-auto">
@@ -149,30 +178,59 @@ function HomeComponent() {
                   />
                 </div>
                 <div className="flex flex-col w-full h-full items-center justify-center">
-                  <InputText
-                    placeholder="From"
-                    divProps="mb-4"
-                    value={from}
-                    onChange={(e) => setFrom(e.target.value)}
-                    LeftComponent={
-                      <IoLocationSharp size={18} className="text-gray2" />
-                    }
-                  />
+                  <Autocomplete
+                    onLoad={onLoadFrom}
+                    onPlaceChanged={() => {
+                      if (searchResultFrom) {
+                        const place = searchResultFrom.getPlace();
+                        setFrom(place.formatted_address ?? "");
+                        console.log("Search : ", place);
+                      }
+                    }}
+                    className="w-full"
+                  >
+                    <InputText
+                      placeholder="From"
+                      divProps="mb-4"
+                      value={from}
+                      onChange={(e) => setFrom(e.target.value)}
+                      LeftComponent={
+                        <IoLocationSharp size={18} className="text-gray2" />
+                      }
+                    />
+                  </Autocomplete>
                   {checked ? (
                     <DurationPicker
+                      name="duration"
                       onTimeChange={handleDurationChange}
                       className="w-full mb-4"
                     />
                   ) : (
-                    <InputText
-                      placeholder="To"
-                      divProps="mb-4"
-                      value={to}
-                      onChange={(e) => setTo(e.target.value)}
-                      LeftComponent={
-                        <MdLocationSearching size={18} className="text-gray2" />
-                      }
-                    />
+                    <Autocomplete
+                      onLoad={onLoadTo}
+                      onPlaceChanged={() => {
+                        if (searchResultTo) {
+                          const place = searchResultTo.getPlace();
+                          setTo(place.formatted_address ?? "");
+                          console.log("Search : ", place);
+                        }
+                      }}
+                      className="w-full"
+                    >
+                      <InputText
+                        name="to"
+                        placeholder="To"
+                        divProps="mb-4"
+                        value={to}
+                        onChange={(e) => setTo(e.target.value)}
+                        LeftComponent={
+                          <MdLocationSearching
+                            size={18}
+                            className="text-gray2"
+                          />
+                        }
+                      />
+                    </Autocomplete>
                   )}
                   <div className="lg:grid lg:grid-cols-2 gap-4 w-full mb-4">
                     <Popover>

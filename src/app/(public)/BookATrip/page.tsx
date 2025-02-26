@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ReservationCompleted from "@/components/ReservationConfirmed/ReservationConfirmed";
-import TravelTopInfo from "@/components/TravelTopInfo/TravelTopInfo";
 import { AuthContext } from "@/context/AuthContext/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { getVehicles } from "@/domain/Vehicles/Vehicles";
@@ -68,6 +67,11 @@ import DurationPicker from "@/components/DurationPicker/DurationPicker";
 import TimePicker from "@/components/TimePicker/TimePicker";
 import { TbClockPin } from "react-icons/tb";
 import { IMaskInput } from "react-imask";
+import {
+  Autocomplete,
+  Libraries,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 
 const steps = [
   {
@@ -154,6 +158,26 @@ function BookATripComponent() {
   const dateParam: string | null = searchParams.get("date");
   const timeParam: string | null = searchParams.get("time");
 
+  const [libraries] = useState<Libraries>(["places"]);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  const [searchResultFrom, setSearchResultFrom] =
+    useState<google.maps.places.Autocomplete>();
+
+  const [searchResultTo, setSearchResultTo] =
+    useState<google.maps.places.Autocomplete>();
+
+  function onLoadFrom(autocomplete: google.maps.places.Autocomplete) {
+    setSearchResultFrom(autocomplete);
+  }
+  function onLoadTo(autocomplete: google.maps.places.Autocomplete) {
+    setSearchResultTo(autocomplete);
+  }
+
   useEffect(() => {
     form.setValue("isDuration", checkedParam === "true" ? true : false);
     form.setValue("from", fromParam || "");
@@ -162,6 +186,74 @@ function BookATripComponent() {
     form.setValue("date", dateParam || "");
     form.setValue("hour", timeParam || "Mr");
   }, [searchParams]);
+
+  const [distance, setDistance] = useState<string | null>(null);
+
+  const calculateDistance = async () => {
+    const originPlace = searchResultFrom ? searchResultFrom.getPlace() : null;
+    const destinationPlace = searchResultTo ? searchResultTo.getPlace() : null;
+
+    const origin =
+      originPlace && originPlace.formatted_address
+        ? originPlace.formatted_address
+        : fromParam
+        ? formValues.from
+        : "";
+    const destination =
+      destinationPlace && destinationPlace.formatted_address
+        ? destinationPlace.formatted_address
+        : toParam
+        ? formValues.to
+        : "";
+
+    if (!origin || !destination) {
+      return;
+    }
+
+    if (!fromParam && !toParam && !isLoaded) {
+      console.error("Google Maps API not loaded");
+      return;
+    }
+
+    try {
+      const directionService = new google.maps.DirectionsService();
+      const results = await directionService.route({
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      });
+
+      if (results.routes[0].legs[0].distance) {
+        setDistance(results.routes[0].legs[0].distance.text);
+      }
+      if (results.routes[0].legs[0].duration) {
+        const arrivalTimeInSeconds =
+          results.routes[0].legs[0].duration.value +
+          Math.floor(Date.now() / 1000);
+
+        const arrivalDate = new Date(arrivalTimeInSeconds * 1000);
+
+        const arrivalTimeFormatted = arrivalDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        form.setValue("duration", arrivalTimeFormatted ?? "");
+      }
+    } catch (error) {
+      console.error("Error fetching directions: ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (checkedParam === "true" || checked) {
+      return;
+    }
+    if (distance && formValues.duration) {
+      return;
+    }
+    calculateDistance();
+  }, [formValues.from, formValues.to]);
 
   useEffect(() => {
     form.setValue("first_name", user?.first_name || "");
@@ -172,7 +264,7 @@ function BookATripComponent() {
   }, [user]);
 
   const handleDurationChange = (duration: string) => {
-    form.setValue("hour", duration);
+    form.setValue("duration", duration);
     console.log("Duração selecionada:", duration);
   };
 
@@ -291,6 +383,10 @@ function BookATripComponent() {
     }
   };
 
+  if (!isLoaded) {
+    return <Loading />;
+  }
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
       {isCompleted ? (
@@ -395,7 +491,7 @@ function BookATripComponent() {
                             <span className="text-xs text-gray2">
                               {formValues.from}
                             </span>
-                            {checkedParam !== "true" && (
+                            {checkedParam === "false" && (
                               <>
                                 <FaArrowRightLong size={20} />
                                 <span className="text-xs text-gray2">
@@ -417,32 +513,48 @@ function BookATripComponent() {
                               />
                             </div>
                             <div className="w-full lg:flex-row flex-col flex justify-between items-center">
-                              <FormField
-                                control={form.control}
-                                name="from"
-                                render={({ field }) => (
-                                  <FormItem className="lg:w-[45%] w-full">
-                                    <FormControl {...field}>
-                                      <InputText
-                                        {...field}
-                                        placeholder="From"
-                                        divProps="lg:mb-0 mb-4"
-                                        LeftComponent={
-                                          <IoLocationSharp
-                                            size={18}
-                                            className="text-gray2"
-                                          />
-                                        }
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              {checked ? (
+                              <Autocomplete
+                                onLoad={onLoadFrom}
+                                onPlaceChanged={() => {
+                                  if (searchResultFrom) {
+                                    const place = searchResultFrom.getPlace();
+                                    form.setValue(
+                                      "from",
+                                      place.formatted_address ?? ""
+                                    );
+                                    console.log("Search : ", place);
+                                  }
+                                }}
+                                className="lg:w-[45%] w-full"
+                              >
                                 <FormField
                                   control={form.control}
                                   name="from"
+                                  render={({ field }) => (
+                                    <FormItem className="w-full">
+                                      <FormControl {...field}>
+                                        <InputText
+                                          {...field}
+                                          placeholder="From"
+                                          divProps="lg:mb-0 mb-4"
+                                          LeftComponent={
+                                            <IoLocationSharp
+                                              size={18}
+                                              className="text-gray2"
+                                            />
+                                          }
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </Autocomplete>
+
+                              {checked ? (
+                                <FormField
+                                  control={form.control}
+                                  name="duration"
                                   render={({ field }) => (
                                     <FormItem className="lg:w-[45%] w-full">
                                       <FormControl {...field}>
@@ -456,27 +568,42 @@ function BookATripComponent() {
                                   )}
                                 />
                               ) : (
-                                <FormField
-                                  control={form.control}
-                                  name="to"
-                                  render={({ field }) => (
-                                    <FormItem className="lg:w-[45%] w-full">
-                                      <FormControl {...field}>
-                                        <InputText
-                                          {...field}
-                                          placeholder="To"
-                                          LeftComponent={
-                                            <MdLocationSearching
-                                              size={18}
-                                              className="text-gray2"
-                                            />
-                                          }
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
+                                <Autocomplete
+                                  onLoad={onLoadTo}
+                                  onPlaceChanged={() => {
+                                    if (searchResultTo) {
+                                      const place = searchResultTo.getPlace();
+                                      form.setValue(
+                                        "to",
+                                        place.formatted_address ?? ""
+                                      );
+                                      console.log("Search : ", place);
+                                    }
+                                  }}
+                                  className="lg:w-[45%] w-full"
+                                >
+                                  <FormField
+                                    control={form.control}
+                                    name="to"
+                                    render={({ field }) => (
+                                      <FormItem className="w-full">
+                                        <FormControl {...field}>
+                                          <InputText
+                                            {...field}
+                                            placeholder="To"
+                                            LeftComponent={
+                                              <MdLocationSearching
+                                                size={18}
+                                                className="text-gray2"
+                                              />
+                                            }
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </Autocomplete>
                               )}
                             </div>
                           </div>
@@ -567,9 +694,15 @@ function BookATripComponent() {
                           </div>
                         )}
                       </div>
-                      <span className="text-sm text-gray2">
-                        Estimated Arrival at 04:45 PM (GMT) - 4.4km
-                      </span>
+
+                      {distance &&
+                        formValues.duration &&
+                        (!checked || checkedParam === "false") && (
+                          <span className="text-sm text-gray2">
+                            Estimated Arrival at {formValues.duration} (GMT) -{" "}
+                            {distance}
+                          </span>
+                        )}
                     </div>
                     <FormField
                       control={form.control}
@@ -894,12 +1027,6 @@ function BookATripComponent() {
                                       mask="+00 (00) 0000-0000"
                                       placeholder="Phone number"
                                     />
-                                    {/* <Input
-                                      {...field}
-                                      variant="white"
-                                      placeholder="Phone number"
-                                      className="w-full"
-                                    /> */}
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -957,7 +1084,45 @@ function BookATripComponent() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <TravelTopInfo />
+                    <div className="w-full bg-white2 flex rounded-xl flex-col justify-between items-start p-10 space-y-3">
+                      <div className="w-full flex flex-row justify-start items-center gap-10">
+                        <span className="text-xs text-gray2">
+                          {formValues.from}
+                        </span>
+                        {(checkedParam === "false" || !checked) && (
+                          <>
+                            <FaArrowRightLong size={20} />
+                            <span className="text-xs text-gray2">
+                              {formValues.to}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex lg:flex-row flex-col justify-center lg:items-center gap-2">
+                        <span className="flex flex-row justify-start items-center gap-2 rounded-full p-2 bg-gray1 text-gray2 text-xs">
+                          <FaRegCalendarAlt size={15} />
+                          {format(formValues.date, "PPP")}
+                        </span>
+                        <span className="flex flex-row justify-start items-center gap-2 rounded-full p-2 bg-gray1 text-gray2 text-xs">
+                          <MdWatch size={15} />
+                          {formValues.hour}
+                        </span>
+                        {(checkedParam === "true" || checked) && (
+                          <span className="flex flex-row justify-start items-center gap-2 rounded-full p-2 bg-gray1 text-gray2 text-xs">
+                            <TbClockPin size={15} />
+                            {formValues.duration}
+                          </span>
+                        )}
+                      </div>
+                      {distance &&
+                        formValues.duration &&
+                        (!checked || checkedParam === "false") && (
+                          <span className="text-sm text-gray2">
+                            Estimated Arrival at {formValues.duration} (GMT) -{" "}
+                            {distance}
+                          </span>
+                        )}
+                    </div>
                     <div className="w-full flex flex-col justify-center items-center mt-10 space-y-5">
                       <h1 className="text-gray2 font-bold text-start w-full">
                         Add credit card
@@ -1165,12 +1330,16 @@ function BookATripComponent() {
                         <span className="text-xs text-gray2">
                           {formValues.from}
                         </span>
-                        <FaArrowRightLong size={20} />
-                        <span className="text-xs text-gray2">
-                          {formValues.to}
-                        </span>
+                        {(checkedParam === "false" || !checked) && (
+                          <>
+                            <FaArrowRightLong size={20} />
+                            <span className="text-xs text-gray2">
+                              {formValues.to}
+                            </span>
+                          </>
+                        )}
                       </div>
-                      <div className="w-full flex flex-row justify-start items-center gap-10">
+                      <div className="flex lg:flex-row flex-col justify-center lg:items-center gap-2">
                         <span className="flex flex-row justify-start items-center gap-2 rounded-full p-2 bg-gray1 text-gray2 text-xs">
                           <FaRegCalendarAlt size={15} />
                           {format(formValues.date, "PPP")}
@@ -1179,10 +1348,21 @@ function BookATripComponent() {
                           <MdWatch size={15} />
                           {formValues.hour}
                         </span>
+                        {(checkedParam === "true" || checked) && (
+                          <span className="flex flex-row justify-start items-center gap-2 rounded-full p-2 bg-gray1 text-gray2 text-xs">
+                            <TbClockPin size={15} />
+                            {formValues.duration}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-sm text-gray2">
-                        Estimated Arrival at 04:45 PM (GMT) - 4.4km
-                      </span>
+                      {distance &&
+                        formValues.duration &&
+                        (!checked || checkedParam === "false") && (
+                          <span className="text-sm text-gray2">
+                            Estimated Arrival at {formValues.duration} (GMT) -{" "}
+                            {distance}
+                          </span>
+                        )}
                       <Separator />
                       <span className="font-bold text-gray2 text-sm">
                         {`${userValues.title ? userValues.title : ""} ${
@@ -1202,9 +1382,6 @@ function BookATripComponent() {
                       <span className="font-bold text-gray2 text-sm">
                         Payment
                       </span>
-                      <button onClick={() => console.log(formValues)}>
-                        testa aui
-                      </button>
                       <div className="flex gap-2 flex-row justify-between items-center">
                         <FiCreditCard size={20} />
                         <span className="text-gray2 text-sm">
