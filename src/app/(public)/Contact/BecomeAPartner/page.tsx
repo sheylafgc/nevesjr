@@ -55,7 +55,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="flex-[4] w-full h-full bg-gray4 rounded-xl gap-10 p-14 flex flex-col justify-center">
+        <div className="flex-[4] w-full h-full bg-gray4 rounded-xl gap-10 lg:p-10 p-6 flex flex-col justify-center">
           <h1 className="font-ppMonument text-3xl text-white leading-s50">
             Let’s Grow <br /> Together!
           </h1>

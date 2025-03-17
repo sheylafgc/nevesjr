@@ -77,15 +77,21 @@ export default function Footer({ isLogged }: FooterProps) {
                 <FaWhatsapp size={18} />
               </div>
               <div className="flex flex-col lg:flex-row gap-2">
-                <span className="font-light text-gray1">Phones/Whatsapp: </span>
+                <span className="font-light text-gray1">Phones/WhatsApp: </span>
                 <div className="flex gap-2">
-                  <span className="font-light text-gray1 underline cursor-pointer">
+                  <a
+                    href="https://wa.me/447777141356"
+                    className="font-light text-gray1 underline cursor-pointer"
+                  >
                     +44 7777 141356
-                  </span>
+                  </a>
                   <span className="font-light text-gray1">|</span>
-                  <span className="font-light text-gray1 underline cursor-pointer">
+                  <a
+                    href="https://wa.me/447777141357"
+                    className="font-light text-gray1 underline cursor-pointer"
+                  >
                     +44 7777 141357
-                  </span>
+                  </a>
                 </div>
               </div>
             </div>

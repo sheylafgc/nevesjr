@@ -7,6 +7,10 @@ import {
 const publicRoutes = [
   { path: "/auth/Login", whenAuthenticated: "redirect" },
   { path: "/auth/SignUp", whenAuthenticated: "redirect" },
+  { path: "/auth/ValidateCode", whenAuthenticated: "redirect" },
+  { path: "/auth/NewPassword", whenAuthenticated: "redirect" },
+  { path: "/auth/RecoverPassword", whenAuthenticated: "redirect" },
+  { path: /^\/auth\/NewPassword\/\d+$/, whenAuthenticated: "redirect" },
   { path: "/", whenAuthenticated: "next" },
   { path: "/About", whenAuthenticated: "next" },
   { path: "/Blog", whenAuthenticated: "next" },
@@ -16,7 +20,6 @@ const publicRoutes = [
   { path: "/OurServices", whenAuthenticated: "next" },
   { path: "/OurServices/OurFleet", whenAuthenticated: "next" },
   { path: /^\/OurServices\/ServicePage\/\d+$/, whenAuthenticated: "next" },
-  { path: "/BookATrip", whenAuthenticated: "next" },
 ] as const;
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED = "/auth/Login";
@@ -24,9 +27,21 @@ const REDIRECT_WHEN_NOT_AUTHENTICATED = "/auth/Login";
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const authToken = request.cookies.get("NEVESJR_TOKEN");
+  const RecoverPasswordToken = request.cookies.get("code-validation");
   const publicRoute = publicRoutes.find((route) =>
     typeof route.path === "string" ? route.path === path : route.path.test(path)
   );
+  const NewPasswordRoute = publicRoute?.path === "/auth/NewPassword";
+  if (NewPasswordRoute && !RecoverPasswordToken) {
+    console.log("RecoverPasswordToken", RecoverPasswordToken);
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED;
+    return NextResponse.redirect(redirectUrl);
+  }
+  if (NewPasswordRoute && RecoverPasswordToken) {
+    return NextResponse.next();
+  }
+
   if (!authToken && publicRoute) {
     return NextResponse.next();
   }
@@ -35,6 +50,7 @@ export function middleware(request: NextRequest) {
     redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED;
     return NextResponse.redirect(redirectUrl);
   }
+
   if (authToken && publicRoute?.whenAuthenticated === "redirect") {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/Internal";

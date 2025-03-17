@@ -5,32 +5,38 @@ import { Carousel, CarouselContent } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { FaFilter } from "react-icons/fa";
 import Image from "next/image";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ClipLoader } from "react-spinners";
 import Link from "next/link";
 import { getBlogs } from "@/domain/Blog/BlogService";
+import FilterBlogs from "@/components/FilterBlogs/FilterBlogs";
+import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BlogProps } from "@/context/BlogContext/BlogContext";
 
 export default function Blog() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [blogForCarousel, setBlogForCarousel] = useState<BlogProps[]>([]);
   const totalItems = BlogCarousel.length;
+  const router = useRouter();
 
   const {
     data: blogs,
     fetchNextPage,
+    isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["blogs"],
     queryFn: async ({ pageParam = 1 }) => {
       const allBlogs = await getBlogs();
+      setBlogForCarousel(allBlogs?.slice(0, 3) ?? []);
       return allBlogs?.slice((pageParam - 1) * 3, pageParam * 3);
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) =>
       (lastPage?.length ?? 0) > 0 ? allPages.length + 1 : undefined,
   });
-
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % totalItems);
@@ -45,11 +51,6 @@ export default function Blog() {
 
   function handlePrev() {
     setActiveIndex((prevIndex) => (prevIndex - 1 + totalItems) % totalItems);
-  }
-
-  function handleFilter() {
-    //TODO: filter blogs
-    console.log(blogs);
   }
 
   return (
@@ -70,28 +71,30 @@ export default function Blog() {
             }}
           >
             <CarouselContent className="gap-5">
-              {BlogCarousel.map((item, index) => (
+              {blogForCarousel?.map((item, index) => (
                 <div
                   key={index}
                   style={{
-                    backgroundImage: `url('${item.image}')`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
+                    backgroundImage: `url(${
+                      (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + item?.image ||
+                      ""
+                    })`,
                   }}
+                  onClick={() => router.push(`/Blog/BlogPage/${item?.id}`)}
                   className={`${
                     activeIndex === index
-                      ? "lg:w-[80%] w-full lg:h-[600px] h-[400px]"
-                      : "hidden lg:block lg:w-[200px] h-[400px] sm:h-[600px]"
-                  } flex flex-col justify-end items-start gap-3 rounded-lg lg:p-10 p-4 box-border transition-all overflow-hidden`}
+                      ? "lg:w-[80%] w-full lg:h-[600px] h-[400px] whitespace-pre-line"
+                      : "hidden lg:flex lg:w-[200px] h-[300px] sm:h-[600px] whitespace-nowrap"
+                  } flex bg-cover bg-center flex-col justify-end items-start gap-3 rounded-lg lg:p-10 p-4 box-border transition-all overflow-hidden`}
                 >
-                  <Button className="rounded-full bg-gray4 hover:bg-gray2">
-                    Lorem ipsum
-                  </Button>
-                  <h1 className="w-full lg:text-3xl text-2xl text-gray1 lg:leading-s50 font-ppMonument whitespace-pre-line">
-                    {item.title}
+                  <span className="rounded-full px-4 py-2 text-sm text-white bg-gray4">
+                    {item?.category}
+                  </span>
+                  <h1 className="w-full lg:text-3xl text-2xl text-gray1 lg:leading-s50 font-ppMonument">
+                    {item?.title}
                   </h1>
                   <p className="w-full text-sm font-light text-gray1">
-                    {item.description}
+                    {item?.subtitle}
                   </p>
                 </div>
               ))}
@@ -117,47 +120,59 @@ export default function Blog() {
       <div className="lg:w-[80%] w-[90%] flex flex-col justify-center items-center py-32">
         <div className="w-full flex flex-row justify-between items-center mb-16">
           <h1 className="font-ppMonument text-3xl text-black">Blog</h1>
-          <Button
-            onClick={handleFilter}
-            className="bg-gray1 rounded-full px-8 py-3 text-black shadow-sm hover:text-gray1"
-          >
-            <FaFilter size={20} />
-            Filters
-          </Button>
+          <FilterBlogs />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full">
-          {blogs?.pages.flat().map((blog) => (
-            <Link
-              href={`/Blog/BlogPage/${blog?.id}`}
-              key={blog?.id}
-              className="flex flex-col justify-start items-center overflow-hidden"
-            >
-              <Image
-                unoptimized
-                priority
-                width={300}
-                height={200}
-                src={
-                  (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + blog?.image || ""
-                }
-                className="h-[200px] object-cover rounded-xl mb-5 w-full"
-                alt={blog?.title ?? "blog image"}
-              />
-              <div className="flex flex-col justify-center items-center w-full">
-                <h1 className="text-black font-bold text-center w-full">
-                  {blog?.title}
-                </h1>
-                <p className="text-xs text-black font-light text-center w-full">
-                  {blog?.subtitle}
-                </p>
+          {blogs?.pages.flat().map((blog) =>
+            isFetching ? (
+              <div
+                key={blog?.id}
+                className="flex flex-col justify-start items-center overflow-hidden"
+              >
+                <Skeleton className="h-[200px] object-cover rounded-xl mb-5 w-full" />
+                <div className="flex flex-col justify-center items-center w-full gap-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
               </div>
-            </Link>
-          ))}
+            ) : (
+              <Link
+                href={`/Blog/BlogPage/${blog?.id}`}
+                key={blog?.id}
+                className="flex flex-col justify-start items-center overflow-hidden"
+              >
+                <Image
+                  unoptimized
+                  priority
+                  width={300}
+                  height={200}
+                  src={
+                    (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + blog?.image ||
+                    ""
+                  }
+                  className="h-[200px] object-cover rounded-xl mb-5 w-full"
+                  alt={blog?.title ?? "blog image"}
+                />
+                <div className="flex flex-col justify-center items-center w-full">
+                  <h1 className="text-black font-bold text-center w-full">
+                    {blog?.title}
+                  </h1>
+                  <p className="text-xs text-black font-light text-center w-full">
+                    {blog?.subtitle}
+                  </p>
+                </div>
+              </Link>
+            )
+          )}
         </div>
         <div className="w-full flex justify-center items-center mt-16">
           <Button
             onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage || (blogs?.pages.length ?? 0) >= 3}
+            disabled={
+              isFetchingNextPage ||
+              (blogs?.pages.length ?? 0) >= 3 ||
+              isFetching
+            }
             className="bg-gray1 rounded-full px-8 py-3 text-black shadow-sm hover:text-gray1"
           >
             {isFetchingNextPage ? (

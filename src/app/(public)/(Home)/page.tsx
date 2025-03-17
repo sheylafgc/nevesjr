@@ -13,7 +13,7 @@ import { MdLuggage } from "react-icons/md";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdLocationSearching } from "react-icons/md";
 
-import { Suspense, useCallback, useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -54,16 +54,19 @@ import {
   Autocomplete,
   Libraries,
 } from "@react-google-maps/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function HomeComponent() {
   const [checked, setChecked] = useState(false);
   const [date, setDate] = useState<Date>();
-  const [selectedTime, setSelectedTime] = useState<string>("12:00 AM");
+  const [selectedTime, setSelectedTime] = useState<string>("12:00:00");
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
   const [selectedDuration, setSelectedDuration] = useState<
     string | undefined
   >();
+  const fromRef = useRef(null);
+  const toRef = useRef(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -192,8 +195,7 @@ function HomeComponent() {
                     <InputText
                       placeholder="From"
                       divProps="mb-4"
-                      value={from}
-                      onChange={(e) => setFrom(e.target.value)}
+                      ref={fromRef}
                       LeftComponent={
                         <IoLocationSharp size={18} className="text-gray2" />
                       }
@@ -221,8 +223,7 @@ function HomeComponent() {
                         name="to"
                         placeholder="To"
                         divProps="mb-4"
-                        value={to}
-                        onChange={(e) => setTo(e.target.value)}
+                        ref={toRef}
                         LeftComponent={
                           <MdLocationSearching
                             size={18}
@@ -257,6 +258,11 @@ function HomeComponent() {
                     <TimePicker onChange={handleTimeChange} />
                   </div>
                   <Button
+                    disabled={
+                      checked
+                        ? !from || !selectedDuration || !date || !selectedTime
+                        : !from || !to || !date || !selectedTime
+                    }
                     variant="outline"
                     onClick={handleRouteSearch}
                     className="w-full bg-black text-white h-[50px] rounded-full"
@@ -288,41 +294,31 @@ function HomeComponent() {
             />
           </div>
         </div>
-        {isFetchingOurServices ? (
-          <Loading />
-        ) : (
-          <Carousel
-            opts={{
-              loop: true,
-            }}
-            arrowsOrientation="normal"
-            className="w-full mt-6 lg:mt-8"
-            buttonColor="black"
-          >
-            <CarouselContent>
-              {ourServices?.map((service) => (
-                <CarouselItem
-                  key={service.id}
-                  className="flex items-center justify-center mb-6 lg:basis-1/2 lg:ml-8 lg:mt-8"
-                >
+        <Carousel
+          opts={{
+            loop: true,
+          }}
+          arrowsOrientation="normal"
+          className="w-full mt-6 lg:mt-8"
+          buttonColor="black"
+        >
+          <CarouselContent>
+            {ourServices?.map((service) => (
+              <CarouselItem
+                key={service.id}
+                className="flex items-center justify-center mb-6 lg:basis-1/2 lg:ml-8 lg:mt-8"
+              >
+                {isFetchingOurServices ? (
+                  <Skeleton className="w-full max-w-[441px] h-[257px] rounded-3xl" />
+                ) : (
                   <div
                     style={{
                       backgroundImage: `url(${
                         (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
                           service.image || ""
                       })`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      width: "100%",
-                      maxWidth: "441px",
-                      height: "257px",
-                      borderRadius: "24px",
-                      display: "flex",
-                      justifyContent: "end",
-                      alignItems: "start",
-                      padding: "1rem",
-                      flexDirection: "column",
                     }}
+                    className="lg:w-full w-[95%] flex justify-end items-start p-4 flex-col bg-cover bg-center max-w-[441px] h-[257px] rounded-3xl"
                   >
                     <span className="font-acumin text-gray1 text-lg lg:text-xl">
                       {service.title}
@@ -334,32 +330,31 @@ function HomeComponent() {
                       See more
                     </Link>
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex flex-col lg:flex-row-reverse items-center justify-between mt-3 lg:mt-8 w-full gap-6">
-              <div className="text-center lg:text-left mb-4 lg:mb-0 order-1">
-                <p className="text-sm text-gray2 font-light leading-relaxed">
-                  Experience premium executive chauffeur services tailored for
-                  comfort, style, and reliability—perfect for your every
-                  journey.
-                </p>
-              </div>
-              <div className="w-full flex flex-row justify-between items-center lg:flex-row">
-                <div className="flex flex-row gap-4 order-1">
-                  <CarouselPrevious />
-                  <CarouselNext />
-                </div>
-                <Link
-                  href={"/OurServices"}
-                  className="rounded-full px-6 py-2 bg-black text-gray1 text-sm hover:opacity-80"
-                >
-                  See all
-                </Link>
-              </div>
+                )}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex flex-col lg:flex-row-reverse items-center justify-between mt-3 lg:mt-8 w-full gap-6">
+            <div className="text-center lg:text-left mb-4 lg:mb-0 order-1">
+              <p className="text-sm text-gray2 font-light leading-relaxed">
+                Experience premium executive chauffeur services tailored for
+                comfort, style, and reliability—perfect for your every journey.
+              </p>
             </div>
-          </Carousel>
-        )}
+            <div className="w-full flex flex-row justify-between items-center lg:flex-row">
+              <div className="flex flex-row gap-4 order-1">
+                <CarouselPrevious />
+                <CarouselNext />
+              </div>
+              <Link
+                href={"/OurServices"}
+                className="rounded-full px-6 py-2 bg-black text-gray1 text-sm hover:opacity-80"
+              >
+                See all
+              </Link>
+            </div>
+          </div>
+        </Carousel>
       </div>
 
       <div className="min-h-screen w-full bg-gradient-to-r from-gray4 to-black flex flex-col items-center justify-center py-16 lg:py-32">
@@ -379,8 +374,55 @@ function HomeComponent() {
         </div>
         <div className="relative w-full px-5 lg:px-0">
           <div className="relative w-full lg:w-[80%] mx-auto flex flex-col lg:flex-row items-center lg:items-start">
-            <div className="hidden lg:block absolute top-[5%] left-0 right-0 transform -translate-y-1/2 h-[2px] bg-gray2 z-0" />
+            <div className="hidden lg:block absolute top-[4%] left-0 right-0 transform -translate-y-1/2 h-[2px] bg-gray2 z-0" />
+            <Carousel
+              opts={{
+                loop: true,
+                align: "start",
+              }}
+              className="w-full mt-6 lg:mt-8 lg:hidden block"
+            >
+              <CarouselContent>
+                {[
+                  {
+                    title: "Safety",
+                    description:
+                      "Your security is our priority, ensuring peace of mind every mile.",
+                  },
+                  {
+                    title: "Reliability",
+                    description: "Always on time, every time.",
+                  },
+                  {
+                    title: "Commitment",
+                    description: "Driven to exceed your expectations.",
+                  },
+                  {
+                    title: "Quality",
+                    description: "Luxury travel, perfected for you.",
+                  },
+                ].map((item, index) => (
+                  <CarouselItem key={index} className="basis-full">
+                    <div className="flex flex-col justify-center items-center text-center w-full px-2 pt-16">
+                      <div className="absolute bottom-[60%] flex items-center justify-center w-full h-[2px] bg-gray2 my-10 lg:hidden">
+                        <div className="w-3 h-3 bg-gray2 rounded-full z-10" />
+                      </div>
 
+                      <div className="hidden lg:flex items-center justify-center">
+                        <div className="w-3 h-3 bg-gray2 rounded-full z-10" />
+                      </div>
+
+                      <h1 className="text-gray1 font-bold text-xl lg:text-2xl mt-4 lg:mt-6 mb-2">
+                        {item.title}
+                      </h1>
+                      <p className="text-sm lg:text-base text-gray1 font-light">
+                        {item.description}
+                      </p>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
             {[
               {
                 title: "Safety",
@@ -402,7 +444,7 @@ function HomeComponent() {
             ].map((item, index) => (
               <div
                 key={index}
-                className="relative flex flex-col items-center text-center w-full lg:w-1/4 px-2 lg:px-4 z-10"
+                className="relative hidden lg:flex flex-col items-center text-center w-full lg:w-1/4 px-2 lg:px-4 z-10"
               >
                 <div className="relative flex items-center justify-center w-full h-[2px] bg-gray2 my-10 lg:hidden">
                   <div className="w-3 h-3 bg-gray2 rounded-full z-10" />
@@ -587,10 +629,13 @@ function HomeComponent() {
               : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-row"
           } gap-10 my-16`}
         >
-          {isFetchingVehicles ? (
-            <Loading />
-          ) : (
-            vehicles?.map((car) => (
+          {vehicles?.map((car) =>
+            isFetchingVehicles ? (
+              <Skeleton
+                key={car.id}
+                className="lg:w-80 w-full lg:h-72 h-96 rounded-xl flex flex-col items-center justify-center gap-1"
+              />
+            ) : (
               <div
                 key={car.id}
                 className="lg:w-80 w-full lg:h-72 h-96 bg-gray1 rounded-xl flex flex-col items-center justify-center gap-1"
@@ -622,7 +667,7 @@ function HomeComponent() {
                   Book now
                 </Button>
               </div>
-            ))
+            )
           )}
         </div>
 

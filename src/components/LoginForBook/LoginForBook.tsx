@@ -31,7 +31,7 @@ export default function LoginForBook() {
   });
 
   async function onSubmit(data: LoginSchemaType) {
-    await signIn(data);
+    await signIn(data, true);
     console.log(data);
   }
   return (

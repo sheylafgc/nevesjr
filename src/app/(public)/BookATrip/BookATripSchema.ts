@@ -1,18 +1,15 @@
 import { z } from "zod";
 
 export const BookATripSchema = z.object({
-  from: z.string().min(1, "Very short from").max(60, "Very long from"),
-  to: z.string().min(1, "Very short to").max(60, "Very long to"),
-  isDuration: z.boolean(),
-  duration: z.string().min(1, "Very short to").max(60, "Very long to"),
-  date: z.string().min(1, "Very short date").max(60, "Very long date"),
-  hour: z.string().min(1, "Very short hour").max(60, "Very long hour"),
-  car_class: z
-    .string()
-    .min(1, "Very short carClass")
-    .max(60, "Very long carClass"),
-  price: z.number().min(0, "Price must be greater than 0"),
-  booking_for: z.enum(["myself", "someoneElse"], {
+  from_route: z.string().min(1, "Very short from").max(60, "Very long from"),
+  to_route: z.string().optional(),
+  date: z.string().min(1, "Very short date"),
+  hour: z.string().min(1, "Very short hour"),
+  duration: z.string().optional(),
+  estimated_time: z.string().optional(),
+  distance_km: z.number().optional(),
+  vehicle: z.number(),
+  booking_for: z.enum(["myself", "someone_else"], {
     required_error: "Please select an option",
   }),
   first_name: z
@@ -23,54 +20,15 @@ export const BookATripSchema = z.object({
     .string()
     .min(1, "Very short LastName")
     .max(60, "Very long LastName"),
+  email: z.string().email("Invalid e-mail"),
   title: z.enum(["Mr", "Ms"], {
     required_error: "Please select an option",
   }),
-  email: z.string().email("Invalid e-mail"),
-  phone: z.string().min(1, "Very short phone").max(60, "Very long phone"),
-  name_on_card: z
+  phone_number: z
     .string()
-    .min(1, "Very short name on card")
-    .max(50, "Very long name on card"),
-  card_number: z
-    .string()
-    .nonempty("Card number is required")
-    .max(19, "Very long card number"),
-  expiration_date: z
-    .string()
-    .nonempty("Expiration date is required")
-    .max(6, "Very long expiration date")
-    .refine(
-      (value) => {
-        const [month] = value.split("/").map((item) => parseInt(item, 10));
-        return month >= 1 && month <= 12;
-      },
-      {
-        message: "Invalid month",
-      }
-    )
-    .refine(
-      (value) => {
-        // Validação de data futura
-        const currentDate = new Date();
-        const [month, year] = value
-          .split("/")
-          .map((item) => parseInt(item, 10));
-        const expiryDate = new Date(year + 2000, month, 1);
-        return expiryDate > currentDate;
-      },
-      {
-        message: "Expiration date must be in the future",
-      }
-    ),
-  cvv: z
-    .string()
-    .regex(/^[0-9]{3,4}$/, "Invalid CVV")
-    .nonempty("CVV is required"),
-  additional_information: z
-    .string()
-    .max(400, "Very long Additional Information")
-    .optional(),
+    .min(1, "Very short phone")
+    .max(60, "Very long phone"),
+  notes: z.string().max(400, "Very long Additional Information").optional(),
 });
 
 export type BookATripSchemaType = z.infer<typeof BookATripSchema>;

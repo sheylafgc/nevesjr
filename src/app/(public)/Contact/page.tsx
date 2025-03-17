@@ -38,40 +38,51 @@ export default function Contact() {
 
   return (
     <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-gray4 to-black lg:bg-gradient-to-l lg:from-black lg:to-gray4">
-      <div className="lg:w-[80%] w-[90%] flex flex-col lg:flex-row justify-center items-center py-40 gap-4">
-        <div className="hidden flex-[6] h-auto lg:flex flex-col justify-between items-center">
-          <Image
-            width={700}
-            height={600}
-            src={WomanTravelling}
-            alt="Woman travelling"
-            className="rounded-xl w-full h-full object-cover"
-          />
+      <div className="lg:w-[80%] w-[90%] flex flex-col lg:flex-row justify-between items-center py-40 gap-4">
+        <div className="hidden flex-[6] h-full w-full lg:flex flex-col justify-between items-center">
+          <div className="w-full rounded-xl">
+            <Image
+              width={700}
+              height={500}
+              src={WomanTravelling}
+              alt="Woman travelling"
+              className="rounded-xl w-full h-full object-cover"
+            />
+          </div>
           <div className="w-full flex flex-row justify-between gap-4 items-center mt-4">
-            <div className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
+            <a
+              href="https://wa.me/447777141356"
+              className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer no-underline"
+            >
               <div className="rounded-full bg-gray1 p-2">
                 <FaWhatsapp size={18} />
               </div>
-              <span className="text-white text-xs">Phone/whatsapp</span>
+              <span className="text-white text-xs">Phone/WhatsApp</span>
               <div className="w-[80%] h-[1px] bg-gradient-to-r from-gray4 via-gray1 to-gray4" />
               <span className="text-white text-xs">+44 7777 141356</span>
-            </div>
-            <div className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
+            </a>
+            <a
+              href="https://wa.me/447777141356"
+              className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer no-underline"
+            >
               <div className="rounded-full bg-gray1 p-2">
                 <FaWhatsapp size={18} />
               </div>
-              <span className="text-white text-xs">Phone/whatsapp</span>
+              <span className="text-white text-xs">Phone/WhatsApp</span>
               <div className="w-[80%] h-[1px] bg-gradient-to-r from-gray4 via-gray1 to-gray4" />
               <span className="text-white text-xs">+44 7777 141356</span>
-            </div>
-            <div className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
+            </a>
+            <a
+              href="mailto:contact@nevesjr.com"
+              className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2 no-underline"
+            >
               <div className="rounded-full bg-gray1 p-2">
                 <MdOutlineEmail size={18} />
               </div>
               <span className="text-white text-xs">Email</span>
               <div className="w-[80%] h-[1px] bg-gradient-to-r from-gray4 via-gray1 to-gray4" />
               <span className="text-white text-xs">contact@nevesjr.com</span>
-            </div>
+            </a>
             <div className="w-[140px] h-[120px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
               <div className="rounded-full bg-gray1 p-2">
                 <FaPlus size={18} />
@@ -104,7 +115,7 @@ export default function Contact() {
           className="w-full rounded-xl lg:hidden block h-full object-cover"
         />
 
-        <div className="lg:flex-[4] bg-gray4 rounded-xl gap-10 p-14 flex-col justify-center items-center">
+        <div className="lg:flex-[4] bg-gray4 rounded-xl gap-10 lg:p-10 p-6 w-full h-full flex-col justify-center items-center">
           <h1 className="font-ppMonument text-3xl text-gray1 leading-s50">
             Have a <br /> sugestion or <br /> a problem?
           </h1>
@@ -114,7 +125,10 @@ export default function Contact() {
           </span>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 mt-8"
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -175,30 +189,39 @@ export default function Contact() {
         </div>
 
         <div className="lg:hidden w-full grid grid-cols-2 gap-4 mt-4">
-          <div className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
+          <a
+            href="https://wa.me/447777141356"
+            className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer no-underline"
+          >
             <div className="rounded-full bg-gray1 p-2">
               <FaWhatsapp size={18} />
             </div>
-            <span className="text-white text-xs">Phone/whatsapp</span>
+            <span className="text-white text-xs">Phone/WhatsApp</span>
             <div className="w-[80%] h-[1px] bg-gradient-to-r from-gray4 via-gray1 to-gray4" />
             <span className="text-white text-xs">+44 7777 141356</span>
-          </div>
-          <div className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
+          </a>
+          <a
+            href="https://wa.me/447777141356"
+            className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer no-underline"
+          >
             <div className="rounded-full bg-gray1 p-2">
               <FaWhatsapp size={18} />
             </div>
-            <span className="text-white text-xs">Phone/whatsapp</span>
+            <span className="text-white text-xs">Phone/WhatsApp</span>
             <div className="w-[80%] h-[1px] bg-gradient-to-r from-gray4 via-gray1 to-gray4" />
             <span className="text-white text-xs">+44 7777 141356</span>
-          </div>
-          <div className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
+          </a>
+          <a
+            href="mailto:contact@nevesjr.com"
+            className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2 no-underline"
+          >
             <div className="rounded-full bg-gray1 p-2">
               <MdOutlineEmail size={18} />
             </div>
             <span className="text-white text-xs">Email</span>
             <div className="w-[80%] h-[1px] bg-gradient-to-r from-gray4 via-gray1 to-gray4" />
             <span className="text-white text-xs">contact@nevesjr.com</span>
-          </div>
+          </a>
           <div className="w-full h-[150px] bg-gray4 rounded-xl flex flex-col items-center justify-center gap-2">
             <div className="rounded-full bg-gray1 p-2">
               <FaPlus size={18} />

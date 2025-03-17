@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import InputText from "../InputText/InputText";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -21,10 +22,42 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
   const [minutes, setMinutes] = useState("00");
   const [isOpen, setIsOpen] = useState(false);
   const [period, setPeriod] = useState<"AM" | "PM">("AM");
-  const time = `${hours}:${minutes}`;
+  const time = `${hours}:${minutes} ${period}`;
+
+  function formattedTime(hour: string, period: string) {
+    if (period === "PM") {
+      return `${parseInt(hour) + 12}:${minutes}:00`;
+    }
+    return `${hour}:${minutes}:00`;
+  }
+
+  const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericValue = Number(value);
+
+    if (
+      /^\d{0,2}$/.test(value) &&
+      (value === "" || (numericValue >= 1 && numericValue <= 12))
+    ) {
+      setHours(value);
+    }
+  };
+
+  const handleMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericValue = Number(value);
+
+    if (
+      /^\d{0,2}$/.test(value) &&
+      (value === "" || (numericValue >= 0 && numericValue <= 59))
+    ) {
+      setMinutes(value);
+    }
+  };
 
   const handleConfirm = () => {
-    onChange(`${time} ${period}`);
+    const timeFormatted = formattedTime(hours, period);
+    onChange(timeFormatted);
     setIsOpen(false);
   };
 
@@ -45,14 +78,13 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
             <div className="flex">
               <Input
                 type="number"
-                min="1"
+                min="0"
                 max="12"
                 placeholder="HH"
                 className="w-16 mx-1"
-                onChange={(e) => {
-                  const hour = e.target.value;
-                  setHours(hour);
-                }}
+                onInput={handleHourChange}
+                value={hours}
+                maxLength={2}
               />
               <Input
                 type="number"
@@ -60,10 +92,9 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
                 max="59"
                 placeholder="MM"
                 className="w-16 mx-1"
-                onChange={(e) => {
-                  const minute = e.target.value;
-                  setMinutes(minute);
-                }}
+                onInput={handleMinuteChange}
+                value={minutes}
+                maxLength={2}
               />
               <Select
                 value={period}
@@ -79,7 +110,7 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
               </Select>
             </div>
             <Button onClick={handleConfirm} className="mt-4">
-              Confirmar
+              Confirm
             </Button>
           </div>
         </PopoverContent>

@@ -3,7 +3,7 @@ import Image from "next/image";
 import LogoBlack from "@/brand/logoBlack.svg";
 import NavLink from "./Navlink";
 import { useContext, useState } from "react";
-import { FaBars, FaChevronDown, FaRegUser } from "react-icons/fa";
+import { FaBars, FaCar, FaChevronDown } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import {
   DropdownMenu,
@@ -34,12 +34,10 @@ export default function Navbar() {
   return (
     <div className="w-full bg-red flex items-center justify-center fixed top-0 z-20">
       <div className="flex items-center justify-between w-full lg:w-[80%] bg-gray1 h-24 rounded-b-[16px] px-6 lg:px-9 shadow-md">
-        {/* Logo */}
         <Link href={"/"}>
-          <Image src={LogoBlack} alt="logoImage" />
+          <Image src={LogoBlack} priority alt="logoImage" />
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-10">
           <NavLink href="/" title="Home" />
           <NavLink href="/OurServices" title="Our services" />
@@ -101,8 +99,8 @@ export default function Navbar() {
                   onPointerEnterCapture={() => {}}
                   onPointerLeaveCapture={() => {}}
                 >
-                  <FaRegUser size={18} className="text-gray2" />
-                  Account
+                  <FaCar size={18} className="text-gray2" />
+                  Book a trip
                 </MenuItem>
                 <MenuItem
                   placeholder=""
@@ -144,7 +142,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Navigation (Below Navbar when open) */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute flex flex-col justify-center bg-gray1 w-full h-[600px] p-5 space-y-10 shadow-lg top-20 mt-0 z-10">
           <NavLink
@@ -246,8 +243,8 @@ export default function Navbar() {
                     }}
                     className="w-full h-full flex justify-start items-center gap-3"
                   >
-                    <FaRegUser size={18} className="text-gray2" />
-                    Account
+                    <FaCar size={18} className="text-gray2" />
+                    Book a trip
                   </MenuItem>
                   <MenuItem
                     placeholder=""

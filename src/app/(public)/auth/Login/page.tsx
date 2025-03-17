@@ -86,7 +86,10 @@ export default function LoginPage() {
             </form>
           </Form>
           <div className="flex flex-col items-center justify-between gap-8">
-            <Link href={"#"} className="underline text-gray2">
+            <Link
+              href={"/auth/RecoverPassword"}
+              className="underline text-gray2"
+            >
               Forgot Password?
             </Link>
             <Link href={"/auth/SignUp"} className="underline text-gray2">

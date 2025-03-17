@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { LoginSchemaType } from "@/app/(public)/auth/Login/LoginSchema";
 import { SignUpSchemaType } from "@/app/(public)/auth/SignUp/SignUpSchema";
 import { Bounce, toast } from "react-toastify";
+import { BookingProps } from "@/domain/Bookings/Bookings";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -29,7 +30,9 @@ export type SignUpProps = Pick<
 
 type AuthContextData = {
   user: UserProps | null;
-  signIn: (data: LoginSchemaType) => Promise<void>;
+  bookings: BookingProps[] | null;
+  getUserBookings: () => Promise<void>;
+  signIn: (data: LoginSchemaType, isOnBookATrip?: boolean) => Promise<void>;
   signUp: (data: SignUpProps) => Promise<void>;
   signOut: () => void;
   loading: boolean;
@@ -39,6 +42,7 @@ export const AuthContext = createContext({} as AuthContextData);
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProps | null>(null);
+  const [bookings, setBookings] = useState<BookingProps[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(true);
   const router = useRouter();
@@ -51,7 +55,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [refresh, token]);
 
-  async function signIn(form: LoginSchemaType) {
+  async function signIn(form: LoginSchemaType, isOnBookATrip?: boolean) {
     setLoading(true);
     try {
       const { data } = await api.post("/login/", form);
@@ -69,9 +73,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         transition: Bounce,
       });
       setRefresh(!refresh);
-      router.push("/Internal");
+
+      if (isOnBookATrip) {
+        router.push("/BookATrip");
+      } else {
+        router.push("/Internal");
+      }
     } catch (error) {
-      let errorMessage = "Ocorreu um erro inesperado.";
+      let errorMessage = "An error occurred.";
 
       if (
         error instanceof Error &&
@@ -172,10 +181,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function getUserBookings() {
+    try {
+      const { data } = await api.get<BookingProps[]>(
+        `/booking/user/${user?.id}/`
+      );
+      setBookings(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
         user,
+        bookings,
+        getUserBookings,
         signIn,
         signUp,
         signOut,

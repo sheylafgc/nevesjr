@@ -50,7 +50,7 @@ function OurServicesItem() {
                   ""
                 }
                 alt="Airport tranfers image"
-                className="rounded-xl object-cover"
+                className="rounded-xl w-full h-full object-cover"
               />
               <h1 className="font-ppMonument leading-s50 text-3xl text-black whitespace-pre-line text-wrap">
                 {service.title}

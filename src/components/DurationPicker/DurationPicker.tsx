@@ -25,7 +25,9 @@ export default function DurationPicker({
   const [isOpen, setIsOpen] = useState(false);
 
   const handleConfirm = () => {
-    const formattedTime = `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
+    const formattedTime = `${hours}:${
+      minutes < 10 ? "0" + minutes : minutes
+    }:00`;
     onTimeChange(formattedTime);
     setIsOpen(false);
   };
@@ -73,7 +75,7 @@ export default function DurationPicker({
               </Select>
             </div>
             <Button onClick={handleConfirm} className="mt-4">
-              Confirmar
+              Confirm
             </Button>
           </div>
         </PopoverContent>
