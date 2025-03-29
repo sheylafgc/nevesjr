@@ -1,1 +1,25 @@
-{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
+{
+  "rewrites": [
+    {
+      "source": "/:locale((?!api|_next/static|_next/image|favicon.ico).*)",
+      "destination": "/:locale"
+    },
+    {
+      "source": "/:locale((?!api|_next/static|_next/image|favicon.ico).*)/:path*",
+      "destination": "/:locale/:path*"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-vercel-rewrite",
+          "value": "1"
+        }
+      ]
+    }
+  ]
+}
