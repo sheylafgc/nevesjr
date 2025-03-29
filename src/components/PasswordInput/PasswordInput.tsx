@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input, type InputProps } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@/src/lib/utils";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(

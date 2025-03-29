@@ -3,15 +3,20 @@ import {
   type NextRequest,
   NextResponse,
 } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+
+const intlMiddleware = createMiddleware(routing);
 
 const publicRoutes = [
+  { path: "/", whenAuthenticated: "next" },
+  { path: "", whenAuthenticated: "next" },
   { path: "/auth/Login", whenAuthenticated: "redirect" },
   { path: "/auth/SignUp", whenAuthenticated: "redirect" },
   { path: "/auth/ValidateCode", whenAuthenticated: "redirect" },
   { path: "/auth/NewPassword", whenAuthenticated: "redirect" },
   { path: "/auth/RecoverPassword", whenAuthenticated: "redirect" },
   { path: /^\/auth\/NewPassword\/\d+$/, whenAuthenticated: "redirect" },
-  { path: "/", whenAuthenticated: "next" },
   { path: "/About", whenAuthenticated: "next" },
   { path: "/Blog", whenAuthenticated: "next" },
   { path: /^\/Blog\/BlogPage\/\d+$/, whenAuthenticated: "next" },
@@ -25,38 +30,53 @@ const publicRoutes = [
 const REDIRECT_WHEN_NOT_AUTHENTICATED = "/auth/Login";
 
 export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
+  const response = intlMiddleware(request);
+
+  const locale = request.nextUrl.locale || routing.defaultLocale;
+
+  const path = request.nextUrl.pathname.replace(
+    new RegExp(`^/(${routing.locales.join("|")})`),
+    ""
+  );
+
   const authToken = request.cookies.get("NEVESJR_TOKEN");
   const RecoverPasswordToken = request.cookies.get("code-validation");
+
   const publicRoute = publicRoutes.find((route) =>
     typeof route.path === "string" ? route.path === path : route.path.test(path)
   );
+
   const NewPasswordRoute = publicRoute?.path === "/auth/NewPassword";
   if (NewPasswordRoute && !RecoverPasswordToken) {
-    console.log("RecoverPasswordToken", RecoverPasswordToken);
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED;
+    const redirectUrl = new URL(
+      `/${locale}${REDIRECT_WHEN_NOT_AUTHENTICATED}`,
+      request.url
+    );
     return NextResponse.redirect(redirectUrl);
   }
+
   if (NewPasswordRoute && RecoverPasswordToken) {
-    return NextResponse.next();
+    return response;
   }
 
   if (!authToken && publicRoute) {
-    return NextResponse.next();
+    return response;
   }
+
   if (!authToken && !publicRoute) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED;
+    const redirectUrl = new URL(
+      `/${locale}${REDIRECT_WHEN_NOT_AUTHENTICATED}`,
+      request.url
+    );
     return NextResponse.redirect(redirectUrl);
   }
 
   if (authToken && publicRoute?.whenAuthenticated === "redirect") {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/Internal";
+    const redirectUrl = new URL(`/${locale}/Internal`, request.url);
     return NextResponse.redirect(redirectUrl);
   }
-  return NextResponse.next();
+
+  return response;
 }
 
 export const config: MiddlewareConfig = {

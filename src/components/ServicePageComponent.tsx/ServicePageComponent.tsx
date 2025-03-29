@@ -10,19 +10,23 @@ import Discover from "@/components/Discover/Discover";
 import MoreServices from "@/components/MoreServices/MoreServices";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/api/api";
-import { OurServicesDataProps } from "@/domain/OurServices.ts/OurServices";
+import { api } from "@/src/api/api";
+import { OurServicesDataProps } from "@/src/domain/OurServices.ts/OurServices";
 import Loading from "../Loading/Loading";
+import { useLocale, useTranslations } from "next-intl";
+import HtmlRerender from "../HtmlRerender/HtmlRerender";
 
 export default function ServicePageComponent() {
+  const tToast = useTranslations("Toasts");
   const { serviceId } = useParams();
+  const locale = useLocale();
   const { data: serviceDetails, isFetching } = useQuery({
     queryKey: ["getOurServiceById"],
     queryFn: async () => {
       if (serviceId) {
         try {
           const { data } = await api.get<OurServicesDataProps>(
-            `/our-service/${serviceId}`
+            `/our-service/${serviceId}/?lang=${locale}`
           );
           return data;
         } catch (error) {
@@ -36,7 +40,7 @@ export default function ServicePageComponent() {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        toast.success("URL copied to clipboard", {
+        toast.success(tToast("URL_copied"), {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -95,9 +99,10 @@ export default function ServicePageComponent() {
           />
 
           <div className="w-full flex flex-col justify-between items-center my-16 gap-5">
-            <p className="text-black text-sm whitespace-pre-line">
-              {serviceDetails?.description}
-            </p>
+            <HtmlRerender
+              htmlString={serviceDetails?.description || ""}
+              className="text-black text-sm whitespace-pre-line"
+            />
           </div>
 
           <div className="lg:block hidden w-full">

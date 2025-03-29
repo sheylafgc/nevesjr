@@ -38,6 +38,7 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Calendar } from "../ui/calendar";
+import { useTranslations } from "next-intl";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,6 +49,8 @@ export default function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const t = useTranslations("InternalPage");
+  const tButton = useTranslations("Buttons");
   const [pageIndex, setPageIndex] = useState(0);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -100,24 +103,21 @@ export default function DataTable<TData, TValue>({
       <div className="w-full flex flex-row justify-between items-center py-5">
         <Link href={"/BookATrip"}>
           <button className="px-8 py-3 text-xs text-white bg-black rounded-full hover:opacity-85">
-            Book new trip
+            {t("book_new_trip")}
           </button>
         </Link>
         <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
           <DialogTrigger className="px-11 py-3 flex justify-center items-center gap-2 text-xs text-black shadow-none bg-gray1 rounded-full hover:bg-gray2 hover:text-white">
             <FiFilter size={18} />
-            filters
+            {tButton("filters")}
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Filter trips</DialogTitle>
-              <DialogDescription>
-                Use the filters below to narrow down your search results. You
-                can filter by origin route, destination, date, and more.
-              </DialogDescription>
+              <DialogTitle>{t("filter_trips")}</DialogTitle>
+              <DialogDescription>{t("filter_trips_detail")}</DialogDescription>
             </DialogHeader>
             <Input
-              placeholder="Filter origin..."
+              placeholder={t("filter_origin")}
               value={
                 (table.getColumn("from_route")?.getFilterValue() as string) ??
                 ""
@@ -130,7 +130,7 @@ export default function DataTable<TData, TValue>({
               className="border"
             />
             <Input
-              placeholder="Filter destination..."
+              placeholder={t("filter_destination")}
               value={
                 (table.getColumn("to_route")?.getFilterValue() as string) ?? ""
               }
@@ -148,12 +148,12 @@ export default function DataTable<TData, TValue>({
               />
             </div>
             <DialogFooter className="lg:gap-0 md:gap-0 gap-2">
-              <Button onClick={clearFilters}>Clear Filters</Button>
+              <Button onClick={clearFilters}>{tButton("clear_filters")}</Button>
               <Button
                 variant="outline"
                 onClick={() => setIsFilterDialogOpen(false)}
               >
-                Close
+                {tButton("close")}
               </Button>
             </DialogFooter>
           </DialogContent>

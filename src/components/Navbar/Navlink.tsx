@@ -1,5 +1,7 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "@/src/i18n/navigation";
+import { useLocale } from "next-intl";
+import { usePathname } from "next/navigation";
 import { ComponentProps } from "react";
 
 interface NavlinkProps extends ComponentProps<"button"> {
@@ -17,8 +19,10 @@ export default function NavLink({
 }: NavlinkProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const isActive = pathname === href;
-
+  const locale = useLocale();
+  const pathWithoutLocale = pathname.replace(new RegExp(`^/(${locale})`), "");
+  const isHome = pathWithoutLocale === "" || pathWithoutLocale === "/";
+  const isActive = isHome ? href === "/" : pathWithoutLocale === href;
   return (
     <button
       onClick={

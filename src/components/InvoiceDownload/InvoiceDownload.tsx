@@ -1,5 +1,5 @@
 "use client";
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
 import { useState } from "react";
 import Cookies from "js-cookie";
 import { MdOutlineFileDownload } from "react-icons/md";

@@ -1,4 +1,5 @@
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
+import { getTranslations } from "next-intl/server";
 import { Bounce, toast } from "react-toastify";
 
 type ContactProps = {
@@ -7,10 +8,11 @@ type ContactProps = {
   message: string;
 };
 
-export async function addContact(contact: ContactProps) {
+export async function addContact(contact: ContactProps, locale: string) {
   try {
+    const tToast = await getTranslations({ locale, namespace: "Toasts" });
     await api.post("/contact/create", contact);
-    toast.success("Your feedback has been submitted", {
+    toast.success(tToast("feedback_submitted"), {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,
@@ -22,8 +24,9 @@ export async function addContact(contact: ContactProps) {
       transition: Bounce,
     });
   } catch (error) {
+    const tToast = await getTranslations({ locale, namespace: "Toasts" });
     console.error(error);
-    toast.error("An error occurred", {
+    toast.error(tToast("an_error_occurred"), {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,

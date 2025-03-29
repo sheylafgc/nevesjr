@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 "use client";
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-import { LoginSchemaType } from "@/app/(public)/auth/Login/LoginSchema";
-import { SignUpSchemaType } from "@/app/(public)/auth/SignUp/SignUpSchema";
+import { LoginSchemaType } from "@/src/app/[locale]/(public)/auth/Login/LoginSchema";
+import { SignUpSchemaType } from "@/src/app/[locale]/(public)/auth/SignUp/SignUpSchema";
 import { Bounce, toast } from "react-toastify";
-import { BookingProps } from "@/domain/Bookings/Bookings";
+import { BookingProps } from "@/src/domain/Bookings/Bookings";
+import { useRouter } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -46,6 +47,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(true);
   const router = useRouter();
+  const tToast = useTranslations("Toasts");
 
   const token = Cookies.get("NEVESJR_TOKEN");
   useEffect(() => {
@@ -61,7 +63,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { data } = await api.post("/login/", form);
       api.defaults.headers.Authorization = `Bearer ${data.access}`;
       Cookies.set("NEVESJR_TOKEN", data.access, { expires: 1 });
-      toast.success("Login successful", {
+      toast.success(tToast("login_successful"), {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -80,7 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         router.push("/Internal");
       }
     } catch (error) {
-      let errorMessage = "An error occurred.";
+      let errorMessage = tToast("an_error_occurred");
 
       if (
         error instanceof Error &&
@@ -121,7 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           "Content-Type": "application/json",
         },
       });
-      toast.success("account successfully created", {
+      toast.success(tToast("account_created"), {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -135,7 +137,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       router.push("/auth/Login");
     } catch (error) {
       console.log(error);
-      toast.error("An error occurred", {
+      toast.error(tToast("an_error_occurred"), {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -167,7 +169,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       router.push("/");
     } catch (error) {
       console.log(error);
-      toast.error("An error occurred", {
+      toast.error(tToast("an_error_occurred"), {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

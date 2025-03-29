@@ -1,55 +1,55 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { IoLocationSharp } from "react-icons/io5";
-import { MdLocationSearching } from "react-icons/md";
 import { RiSettings3Line } from "react-icons/ri";
 import InvoiceDownload from "../InvoiceDownload/InvoiceDownload";
 import { format } from "date-fns";
-import { BookingProps } from "@/domain/Bookings/Bookings";
+import { BookingProps } from "@/src/domain/Bookings/Bookings";
 import ActionsCell from "../ActionsCell/ActionsCell";
+import Image from "next/image";
+import {
+  DateHeader,
+  FromHeader,
+  HourHeader,
+  InvoiceHeader,
+  PaymentHeader,
+  PaymentStatusHeader,
+  PriceHeader,
+  ToHeader,
+} from "../TableHeaders/TableHeaders";
 
 export const columns: ColumnDef<BookingProps>[] = [
-  // {
-  //   accessorKey: "rideClassData",
-  //   header: "Ride",
-  //   cell: ({ row }) => {
-  //     const vehicle = row.getValue<VehicleProps>("vehicleData");
+  {
+    accessorKey: "vehicle_details",
+    header: "Ride",
+    cell: ({ row }) => {
+      const vehicle =
+        row.getValue<BookingProps["vehicle_details"]>("vehicle_details");
 
-  //     return (
-  //       <div className="w-full flex justify-center items-center">
-  //         <div className="p-2 w-12 h-12 flex justify-center items-center border bg-gray1 rounded-lg">
-  //           <Image
-  //             width={100}
-  //             height={100}
-  //             src={
-  //               (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + vehicle.car_image ||
-  //               ""
-  //             }
-  //             alt={vehicle.car_name}
-  //           />
-  //         </div>
-  //       </div>
-  //     );
-  //   },
-  // },
+      return (
+        <div className="w-full flex justify-center items-center">
+          <div className="p-2 w-12 h-12 flex justify-center items-center border bg-gray1 rounded-lg">
+            <Image
+              width={100}
+              height={100}
+              src={
+                (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + vehicle.car_image ||
+                ""
+              }
+              alt={vehicle.car_name}
+            />
+          </div>
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "from_route",
-    header: () => (
-      <div className="flex justify-center items-center gap-2">
-        From
-        <IoLocationSharp size={18} className="text-gray2" />
-      </div>
-    ),
+    header: () => <FromHeader />,
   },
   {
     accessorKey: "to_route",
-    header: () => (
-      <div className="flex justify-center items-center gap-2">
-        <MdLocationSearching size={18} className="text-gray2" />
-        To
-      </div>
-    ),
+    header: () => <ToHeader />,
     cell: ({ row }) => {
       const to_route = row.getValue<string>("to_route");
 
@@ -58,7 +58,7 @@ export const columns: ColumnDef<BookingProps>[] = [
   },
   {
     accessorKey: "date",
-    header: "Date",
+    header: () => <DateHeader />,
     cell: ({ row }) => {
       const date = new Date(row.getValue<string>("date"));
 
@@ -71,7 +71,7 @@ export const columns: ColumnDef<BookingProps>[] = [
   },
   {
     accessorKey: "hour",
-    header: "Hour",
+    header: () => <HourHeader />,
     cell: ({ row }) => {
       const hour = row.getValue<BookingProps>("hour");
 
@@ -103,7 +103,7 @@ export const columns: ColumnDef<BookingProps>[] = [
   },
   {
     accessorKey: "amount",
-    header: () => <div>Price</div>,
+    header: () => <PriceHeader />,
     cell: ({ row }) => {
       const amount = row.getValue<string>("amount");
       const price = parseFloat(amount) / 100;
@@ -118,7 +118,7 @@ export const columns: ColumnDef<BookingProps>[] = [
   },
   {
     accessorKey: "payment_brand",
-    header: "Payment",
+    header: () => <PaymentHeader />,
     cell: ({ row }) => {
       const payment_brand = row.getValue<string>("payment_brand");
 
@@ -127,7 +127,7 @@ export const columns: ColumnDef<BookingProps>[] = [
   },
   {
     accessorKey: "payment_status",
-    header: "Payment Status",
+    header: () => <PaymentStatusHeader />,
     cell: ({ row }) => {
       const payment_status = row.getValue<string>("payment_status");
 
@@ -144,7 +144,7 @@ export const columns: ColumnDef<BookingProps>[] = [
   },
   {
     accessorKey: "payment_intent_id",
-    header: "Invoice",
+    header: () => <InvoiceHeader />,
     cell: ({ row }) => {
       return (
         <InvoiceDownload

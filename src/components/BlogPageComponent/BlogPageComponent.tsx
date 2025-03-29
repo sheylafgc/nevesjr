@@ -1,7 +1,6 @@
 "use client";
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
 import RelatedPosts from "@/components/RelatedPosts/RelatedPosts";
-import { BlogProps } from "@/context/BlogContext/BlogContext";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,15 +9,22 @@ import { FaFacebookF, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 import { FaLink } from "react-icons/fa6";
 import { Bounce, toast } from "react-toastify";
 import Loading from "../Loading/Loading";
+import { useLocale, useTranslations } from "next-intl";
+import { getSocialMedia } from "@/src/domain/Content/SociaMedia";
+import { BlogProps } from "@/src/domain/Blog/BlogService";
 
 export default function BlogPageComponent() {
+  const tToast = useTranslations("Toasts");
+  const locale = useLocale();
   const { blogId } = useParams();
   const { data: blogDetails, isFetching } = useQuery({
     queryKey: ["getBlogPage"],
     queryFn: async () => {
       if (blogId) {
         try {
-          const { data } = await api.get<BlogProps>(`/blog/${blogId}`);
+          const { data } = await api.get<BlogProps>(
+            `/blog/${blogId}/?lang=${locale}`
+          );
           return data;
         } catch (error) {
           console.error(error);
@@ -27,12 +33,30 @@ export default function BlogPageComponent() {
     },
   });
 
+  const { data: socialMedia } = useQuery({
+    queryKey: ["getSocialMediaContent", locale],
+    queryFn: async () => {
+      const data = await getSocialMedia({ locale });
+      return data;
+    },
+  });
+
+  const whatsapp = socialMedia ? socialMedia[0] : null;
+
+  const facebook = socialMedia?.find(
+    (media) => media.label.toLowerCase() === "facebook"
+  );
+
+  const linkedin = socialMedia?.find(
+    (media) => media.label.toLowerCase() === "linkedin"
+  );
+
   function copyCurrentUrl() {
     const url = window.location.href;
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        toast.success("URL copied to clipboard", {
+        toast.success(tToast("URL_copied"), {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -70,13 +94,22 @@ export default function BlogPageComponent() {
               {blogDetails?.subtitle}
             </p>
             <div className="flex flex-row justify-between items-center gap-5">
-              <Link href={"#"} className="text-white rounded-full bg-gray2 p-3">
+              <Link
+                href={`${facebook?.value}`}
+                className="text-white rounded-full bg-gray2 p-3"
+              >
                 <FaFacebookF size={20} />
               </Link>
-              <Link href={"#"} className="text-white rounded-full bg-gray2 p-3">
+              <Link
+                href={`${linkedin?.value}`}
+                className="text-white rounded-full bg-gray2 p-3"
+              >
                 <FaLinkedinIn size={20} />
               </Link>
-              <Link href={"#"} className="text-white rounded-full bg-gray2 p-3">
+              <Link
+                href={`https://wa.me/${whatsapp?.value}`}
+                className="text-white rounded-full bg-gray2 p-3"
+              >
                 <FaWhatsapp size={20} />
               </Link>
               <button
@@ -90,19 +123,19 @@ export default function BlogPageComponent() {
         </div>
       </div>
 
-      <div className="lg:w-[60%] w-[90%] flex flex-col justify-between items-center -mt-36">
+      <div className="lg:w-[60%] w-[90%] flex flex-col justify-between items-center -mt-24">
         <Image
           src={
             (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + blogDetails?.image ||
             "/public/TravelImage.svg"
           }
-          width={300}
-          height={300}
+          width={600}
+          height={200}
           alt={blogDetails?.title || "Image not found"}
-          className="w-full h-[300px] object-cover rounded-xl"
+          className="w-full h-[400px] object-cover rounded-xl"
         />
 
-        <div className="w-full flex flex-col justify-between items-center my-16 gap-5">
+        <div className="w-full flex flex-col justify-between items-center mt-10 mb-16 gap-5">
           <p className="text-black text-sm whitespace-pre-line">
             {blogDetails?.description}
           </p>

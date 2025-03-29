@@ -1,77 +1,47 @@
 "use client";
 import Image from "next/image";
-import LogoBlack from "@/brand/logoBlack.svg";
+import LogoBlack from "@/src/brand/logoBlack.svg";
 import NavLink from "./Navlink";
 import { useContext, useState } from "react";
 import { FaBars, FaCar, FaChevronDown } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { FaGlobe } from "react-icons/fa";
 import { PiSignOutBold } from "react-icons/pi";
-import { Menu, MenuHandler, MenuList, MenuItem } from "@/components/Mtailwind";
+import {
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+} from "@/src/components/Mtailwind";
 import { Button } from "../ui/button";
 import { BiColumns } from "react-icons/bi";
-import { useRouter } from "next/navigation";
-import { AuthContext } from "@/context/AuthContext/AuthContext";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { AuthContext } from "@/src/context/AuthContext/AuthContext";
+import LanguageSelector from "../LanguageSelector/LanguageSelector";
+import { useRouter } from "@/src/i18n/navigation";
 
 export default function Navbar() {
+  const t = useTranslations("Header");
   const { user, signOut } = useContext(AuthContext);
   const router = useRouter();
-  const [language, setLanguage] = useState("en");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openUserMenu, setOpenUserMenu] = useState(false);
   const [openMobileUserMenu, setOpenMobileUserMenu] = useState(false);
 
   return (
-    <div className="w-full bg-red flex items-center justify-center fixed top-0 z-20">
+    <div className="w-full flex items-center justify-center fixed top-0 z-20">
       <div className="flex items-center justify-between w-full lg:w-[80%] bg-gray1 h-24 rounded-b-[16px] px-6 lg:px-9 shadow-md">
         <Link href={"/"}>
           <Image src={LogoBlack} priority alt="logoImage" />
         </Link>
 
         <div className="hidden lg:flex items-center space-x-10">
-          <NavLink href="/" title="Home" />
-          <NavLink href="/OurServices" title="Our services" />
-          <NavLink href="/About" title="About" />
-          <NavLink href="/Blog" title="Blog" />
-          <NavLink href="/Contact" title="Contact" />
-          <div className="flex items-center space-x-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent shadow-none hover:bg-transparent">
-                  <FaGlobe size={18} className="text-gray2" />
-                  <span className="text-gray2">{language}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Select language</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={language}
-                  onValueChange={setLanguage}
-                >
-                  <DropdownMenuRadioItem value="pt">
-                    Portuguese
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en">
-                    English
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="es">
-                    Spanish
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <NavLink href="/" title={t("nav1")} />
+          <NavLink href="/OurServices" title={t("nav2")} />
+          <NavLink href="/About" title={t("nav3")} />
+          <NavLink href="/Blog" title={t("nav4")} />
+          <NavLink href="/Contact" title={t("nav5")} />
+          <LanguageSelector />
           {user ? (
             <Menu open={openUserMenu} handler={setOpenUserMenu}>
               <MenuHandler>
@@ -100,7 +70,7 @@ export default function Navbar() {
                   onPointerLeaveCapture={() => {}}
                 >
                   <FaCar size={18} className="text-gray2" />
-                  Book a trip
+                  {t("book_a_trip")}
                 </MenuItem>
                 <MenuItem
                   placeholder=""
@@ -110,7 +80,7 @@ export default function Navbar() {
                   className="flex justify-start items-center gap-3"
                 >
                   <BiColumns size={18} className="text-gray2" />
-                  My trips
+                  {t("my_trips")}
                 </MenuItem>
                 <hr className="my-2 border-blue-gray-50" />
                 <MenuItem
@@ -121,12 +91,12 @@ export default function Navbar() {
                   className="flex justify-start items-center gap-3"
                 >
                   <PiSignOutBold size={18} className="text-gray2" />
-                  Log out
+                  {t("logout")}
                 </MenuItem>
               </MenuList>
             </Menu>
           ) : (
-            <NavLink href="/auth/Login" title="Sign in" />
+            <NavLink href="/auth/Login" title={t("nav6")} />
           )}
         </div>
 
@@ -150,7 +120,7 @@ export default function Navbar() {
               router.push("/");
             }}
             href="/"
-            title="Home"
+            title={t("nav1")}
           />
           <NavLink
             closeMobile={() => {
@@ -158,7 +128,7 @@ export default function Navbar() {
               router.push("/OurServices");
             }}
             href="/OurServices"
-            title="Our services"
+            title={t("nav2")}
           />
           <NavLink
             closeMobile={() => {
@@ -166,7 +136,7 @@ export default function Navbar() {
               router.push("/About");
             }}
             href="/About"
-            title="About"
+            title={t("nav3")}
           />
           <NavLink
             closeMobile={() => {
@@ -174,7 +144,7 @@ export default function Navbar() {
               router.push("/Blog");
             }}
             href="/Blog"
-            title="Blog"
+            title={t("nav4")}
           />
           <NavLink
             closeMobile={() => {
@@ -182,35 +152,10 @@ export default function Navbar() {
               router.push("/Contact");
             }}
             href="/Contact"
-            title="Contact"
+            title={t("nav5")}
           />
           <div className="flex justify-center items-center space-x-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent shadow-none hover:bg-transparent">
-                  <FaGlobe size={18} className="text-gray2" />
-                  <span className="text-gray2">{language}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Select language</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={language}
-                  onValueChange={setLanguage}
-                >
-                  <DropdownMenuRadioItem value="pt">
-                    Portuguese
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en">
-                    English
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="es">
-                    Spanish
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <LanguageSelector />
           </div>
           {user ? (
             <div className="flex justify-center items-center">
@@ -244,7 +189,7 @@ export default function Navbar() {
                     className="w-full h-full flex justify-start items-center gap-3"
                   >
                     <FaCar size={18} className="text-gray2" />
-                    Book a trip
+                    {t("book_a_trip")}
                   </MenuItem>
                   <MenuItem
                     placeholder=""
@@ -257,7 +202,7 @@ export default function Navbar() {
                     className="flex justify-start items-center gap-3"
                   >
                     <BiColumns size={18} className="text-gray2" />
-                    My trips
+                    {t("my_trips")}
                   </MenuItem>
                   <hr className="my-2 border-blue-gray-50" />
                   <MenuItem
@@ -271,7 +216,7 @@ export default function Navbar() {
                     className="flex justify-start items-center gap-3"
                   >
                     <PiSignOutBold size={18} className="text-gray2" />
-                    Log out
+                    {t("logout")}
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -283,7 +228,7 @@ export default function Navbar() {
                 router.push("/auth/Login");
               }}
               href="/auth/Login"
-              title="Sign in"
+              title={t("nav6")}
             />
           )}
         </div>

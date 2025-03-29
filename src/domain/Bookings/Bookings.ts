@@ -1,5 +1,5 @@
 "use client";
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
 import Cookies from "js-cookie";
 
 export type BookingProps = {

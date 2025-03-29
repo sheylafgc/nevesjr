@@ -1,12 +1,14 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/src/i18n/navigation";
 import { Button } from "../ui/button";
+import { useTranslations } from "next-intl";
 
 interface DiscoverProps {
   isInService?: boolean;
 }
 
 export default function Discover({ isInService }: DiscoverProps) {
+  const tButton = useTranslations("Buttons");
   const router = useRouter();
 
   return isInService ? (
@@ -18,7 +20,7 @@ export default function Discover({ isInService }: DiscoverProps) {
         onClick={() => router.push("/BookATrip")}
         className="rounded-full px-8 lg:px-10 hover:bg-gray1 hover:text-black"
       >
-        Book now
+        {tButton("button_book_now")}
       </Button>
     </div>
   ) : (
@@ -33,7 +35,7 @@ export default function Discover({ isInService }: DiscoverProps) {
               onClick={() => router.push("/BookATrip")}
               className="lg:w-auto w-full rounded-full px-8 lg:px-10 lg:py-0 py-5 hover:bg-gray1 hover:text-black"
             >
-              Book now
+              {tButton("button_book_now")}
             </Button>
           </div>
         </div>

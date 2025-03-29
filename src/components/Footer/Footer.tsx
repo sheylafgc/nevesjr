@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import LogoWhite from "@/brand/logoWhite.svg";
-import LogoBlack from "@/brand/logoBlack.svg";
+import LogoWhite from "@/src/brand/logoWhite.svg";
+import LogoBlack from "@/src/brand/logoBlack.svg";
 import NavLink from "../Navbar/Navlink";
 import Link from "next/link";
 
@@ -9,12 +9,15 @@ import { FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
 interface FooterProps {
   isLogged?: boolean;
 }
 
 export default function Footer({ isLogged }: FooterProps) {
+  const t = useTranslations("Footer");
+
   return (
     <footer
       className={`w-full ${
@@ -24,10 +27,10 @@ export default function Footer({ isLogged }: FooterProps) {
       {isLogged ? (
         <div className="lg:w-[80%] w-[90%] h-full flex lg:flex-row lg:py-0 py-16 flex-col justify-around lg:items-center items-start lg:gap-0 gap-10">
           <span className="lg:text-sm text-gray2 order-2">
-            Política de privacidade
+            {t("privacy_policy")}
           </span>
           <span className="lg:text-sm text-gray2 order-3">
-            NevesJR - All Rights Reserved - 2024
+            {t("all_rights_reserved")}
           </span>
           <Image
             width={150}
@@ -49,22 +52,22 @@ export default function Footer({ isLogged }: FooterProps) {
             </p>
             <div className="lg:hidden h-[1px] bg-gray1/50 w-full" />
             <div className="flex flex-col lg:gap-1 gap-10">
-              <h1 className="font-bold text-gray1">Quick links</h1>
+              <h1 className="font-bold text-gray1">{t("quick_links")}</h1>
               <div className="flex lg:flex-row flex-col lg:items-center items-start gap-10">
-                <NavLink isFooter href="/" title="Home" />
-                <NavLink isFooter href="/OurServices" title="Our services" />
-                <NavLink isFooter href="/About" title="About" />
-                <NavLink isFooter href="/Contact" title="Contact" />
-                <NavLink isFooter href="/Blog" title="Blog" />
-                <NavLink isFooter href="/auth/Login" title="SignIn" />
+                <NavLink isFooter href="/" title={t("nav1")} />
+                <NavLink isFooter href="/OurServices" title={t("nav2")} />
+                <NavLink isFooter href="/About" title={t("nav3")} />
+                <NavLink isFooter href="/Contact" title={t("nav4")} />
+                <NavLink isFooter href="/Blog" title={t("nav5")} />
+                <NavLink isFooter href="/auth/Login" title={t("nav6")} />
               </div>
             </div>
             <div className="lg:hidden h-[1px] bg-gray1/50 w-full" />
 
             <div className="flex flex-col">
-              <h1 className="font-bold text-gray1">Company</h1>
+              <h1 className="font-bold text-gray1">{t("company")}</h1>
               <span className="text-gray1/75 font-light">
-                NevesJR Executive Services
+                {t("company_name")}
               </span>
             </div>
           </div>
@@ -77,7 +80,9 @@ export default function Footer({ isLogged }: FooterProps) {
                 <FaWhatsapp size={18} />
               </div>
               <div className="flex flex-col lg:flex-row gap-2">
-                <span className="font-light text-gray1">Phones/WhatsApp: </span>
+                <span className="font-light text-gray1">
+                  {t("phones/whatsapp")}
+                </span>
                 <div className="flex gap-2">
                   <a
                     href="https://wa.me/447777141356"
@@ -98,7 +103,9 @@ export default function Footer({ isLogged }: FooterProps) {
             <div className="lg:hidden h-[1px] bg-gray1/50 w-full order-1" />
             {/* Social Media Section */}
             <div className="lg:w-auto w-full gap-2 flex lg:flex-row flex-col items-start lg:items-center order-1 lg:order-first">
-              <span className="text-gray1 font-bold lg:mr-3">Follow us</span>
+              <span className="text-gray1 font-bold lg:mr-3">
+                {t("follow_us")}
+              </span>
               <div className="flex flex-row gap-3">
                 <Link href={"#"} className="p-2 bg-gray1 rounded-full">
                   <FaFacebookF size={18} />
@@ -114,17 +121,15 @@ export default function Footer({ isLogged }: FooterProps) {
 
             <div className="lg:hidden h-[1px] bg-gray1/50 w-full order-1" />
 
-            {/* Footer Info */}
             <div className="flex flex-row order-1 lg:order-0">
               <span className="font-light text-gray1">
-                NevesJR - All Rights Reserved - 2024
+                {t("all_rights_reserved")}
               </span>
             </div>
 
-            {/* Privacy Policy */}
             <div className="hidden lg:flex flex-row lg:order-last">
               <span className="underline font-light text-gray1">
-                Privacy policy
+                {t("privacy_policy")}
               </span>
             </div>
           </div>

@@ -2,7 +2,7 @@
 import {
   loginSchema,
   LoginSchemaType,
-} from "@/app/(public)/auth/Login/LoginSchema";
+} from "@/src/app/[locale]/(public)/auth/Login/LoginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useContext } from "react";
-import { AuthContext } from "@/context/AuthContext/AuthContext";
+import { AuthContext } from "@/src/context/AuthContext/AuthContext";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 
 export default function LoginForBook() {

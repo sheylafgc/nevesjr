@@ -1,4 +1,4 @@
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
 
 export type VehicleProps = {
   id: number;
@@ -14,9 +14,9 @@ export type VehicleProps = {
   car_best_for_services: string;
 };
 
-export async function getVehicles() {
+export async function getVehicles({ locale }: { locale: string }) {
   try {
-    const { data } = await api.get<VehicleProps[]>("/vehicle");
+    const { data } = await api.get<VehicleProps[]>(`/vehicle/?lang=${locale}`);
     return data;
   } catch (error) {
     console.error(error);

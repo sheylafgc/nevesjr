@@ -12,14 +12,16 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { BookingProps } from "@/domain/Bookings/Bookings";
+import { BookingProps } from "@/src/domain/Bookings/Bookings";
 import TripDetailsDialog from "../TripDetailsDialog/TripDetailsDialog";
+import { useTranslations } from "next-intl";
 
 interface ActionCellProps {
   booking: BookingProps;
 }
 
 export default function ActionsCell({ booking }: ActionCellProps) {
+  const t = useTranslations("InternalPage");
   const [isCanceledDialogOpen, setIsCanceledDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
@@ -44,17 +46,17 @@ export default function ActionsCell({ booking }: ActionCellProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="space-y-1">
-          <DropdownMenuLabel>Options</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("options")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsDetailDialogOpen(true)}>
-            Trip details
+            {t("trip_details")}
           </DropdownMenuItem>
           {booking.payment_status === "approved" && (
             <DropdownMenuItem
               onSelect={() => setIsCanceledDialogOpen(true)}
               className="bg-red-500 text-white"
             >
-              Cancel trip
+              {t("cancel_trip")}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

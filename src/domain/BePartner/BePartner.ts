@@ -1,4 +1,5 @@
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
+import { getTranslations } from "next-intl/server";
 import { Bounce, toast } from "react-toastify";
 
 type PartnerProps = {
@@ -8,10 +9,12 @@ type PartnerProps = {
   car_model: string;
 };
 
-export async function addPartner(partner: PartnerProps) {
+export async function addPartner(partner: PartnerProps, locale: string) {
   try {
+    const tToast = await getTranslations({ locale, namespace: "Toasts" });
+
     await api.post("/be-partner/create", partner);
-    toast.success("Your data was sent", {
+    toast.success(tToast("your_data_was_sent"), {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,
@@ -23,8 +26,9 @@ export async function addPartner(partner: PartnerProps) {
       transition: Bounce,
     });
   } catch (error) {
+    const tToast = await getTranslations({ locale, namespace: "Toasts" });
     console.error(error);
-    toast.error("An error occurred", {
+    toast.error(tToast("an_error_occurred"), {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,

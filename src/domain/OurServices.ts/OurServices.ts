@@ -1,4 +1,4 @@
-import { api } from "@/api/api";
+import { api } from "@/src/api/api";
 
 export type OurServicesDataProps = {
   id: number;
@@ -8,9 +8,11 @@ export type OurServicesDataProps = {
   description: string;
 };
 
-export async function getOurServices() {
+export async function getOurServices(params?: { locale?: string }) {
   try {
-    const { data } = await api.get<OurServicesDataProps[]>(`/our-service`);
+    const { data } = await api.get<OurServicesDataProps[]>(
+      `/our-service/?lang=${params?.locale}`
+    );
     return data;
   } catch (error) {
     console.error(error);

@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingProps } from "@/domain/Bookings/Bookings";
+import { BookingProps } from "@/src/domain/Bookings/Bookings";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,9 @@ import { TbClockPin } from "react-icons/tb";
 import { Separator } from "../ui/separator";
 import { formatDate, formatHourWithSec, formatTime } from "@/utils/formatTime";
 import { useQuery } from "@tanstack/react-query";
-import { getVehicles } from "@/domain/Vehicles/Vehicles";
+import { getVehicles } from "@/src/domain/Vehicles/Vehicles";
 import { Skeleton } from "../ui/skeleton";
+import { useLocale, useTranslations } from "next-intl";
 
 type CancelTripDialogProps = {
   booking: BookingProps;
@@ -31,19 +32,25 @@ export default function TripDetailsDialog({
   isOpen,
   onOpenChange,
 }: CancelTripDialogProps) {
+  const t = useTranslations("InternalPage");
+  const tButton = useTranslations("Buttons");
+  const tBook = useTranslations("Book_a_trip");
+  const locale = useLocale();
+
   const { data: vehicles, isFetching: isFetchingVehicles } = useQuery({
-    queryKey: ["getVehicles"],
-    queryFn: getVehicles,
+    queryKey: ["getVehicles", locale],
+    queryFn: async () => {
+      const data = await getVehicles({ locale });
+      return data;
+    },
   });
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Trip details</DialogTitle>
-          <DialogDescription>
-            Here are the details of the trip.
-          </DialogDescription>
+          <DialogTitle>{t("trip_details")}</DialogTitle>
+          <DialogDescription>{t("trip_card_details")}</DialogDescription>
         </DialogHeader>
         <div className="w-full bg-white2 flex rounded-xl flex-col justify-between items-start p-10 space-y-3">
           <div className="w-full flex flex-row justify-start items-center gap-10">
@@ -75,7 +82,7 @@ export default function TripDetailsDialog({
 
           {booking.estimated_time !== "0.0" && booking.estimated_time && (
             <span className="text-sm text-gray2">
-              Estimated Arrival at{" "}
+              {tBook("estimated_arrival")}{" "}
               {booking.estimated_time ? formatTime(booking.estimated_time) : ""}{" "}
               (GMT) - {booking.distance_km.toFixed(1)} km
             </span>
@@ -99,14 +106,14 @@ export default function TripDetailsDialog({
           {booking.notes && (
             <>
               <Separator />
-              <span className="font-bold text-gray2 text-sm">Notes</span>
+              <span className="font-bold text-gray2 text-sm">{t("notes")}</span>
               <span className="text-gray2 text-sm"> {booking.notes}</span>
             </>
           )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Close
+            {tButton("close")}
           </Button>
         </DialogFooter>
       </DialogContent>
