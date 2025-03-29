@@ -1,19 +1,19 @@
 {
   "rewrites": [
     {
-      "source": "/:locale((?!api|_next/static|_next/image|favicon.ico).*)",
-      "destination": "/:locale"
+      "source": "/(en|pt|es)/:path*",
+      "destination": "/:path*?locale=:1"
     },
     {
-      "source": "/:locale((?!api|_next/static|_next/image|favicon.ico).*)/:path*",
-      "destination": "/:locale/:path*"
+      "source": "/(en|pt|es)",
+      "destination": "/?locale=:1"
     }
   ],
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "headers": [
         {
           "key": "x-vercel-rewrite",
