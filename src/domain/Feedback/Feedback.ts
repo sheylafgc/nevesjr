@@ -1,6 +1,6 @@
 import { api } from "@/src/api/api";
 
-type FeedbackProps = {
+export type FeedbackProps = {
   id: number;
   name: string;
   occupation: string;

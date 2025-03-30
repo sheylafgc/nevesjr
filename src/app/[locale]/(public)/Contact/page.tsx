@@ -111,7 +111,7 @@ export default function Contact() {
                   : WomanTravelling
               })`,
             }}
-          ></div>
+          />
 
           <div className="w-full flex flex-row justify-between gap-4 items-center mt-4">
             <a

@@ -2,19 +2,26 @@
 import { useRouter } from "@/src/i18n/navigation";
 import { Button } from "../ui/button";
 import { useTranslations } from "next-intl";
+import ChofferImage from "@/public/Choffer.svg";
 
 interface DiscoverProps {
   isInService?: boolean;
+  backgroundImage?: string;
+  title?: string;
 }
 
-export default function Discover({ isInService }: DiscoverProps) {
+export default function Discover({
+  isInService,
+  backgroundImage,
+  title,
+}: DiscoverProps) {
   const tButton = useTranslations("Buttons");
   const router = useRouter();
 
   return isInService ? (
     <div className="w-full h-28 bg-gray4 flex flex-col lg:flex-row justify-between items-center px-6 lg:px-10 py-5 rounded-xl gap-4">
       <h1 className="text-lg lg:text-xl font-ppMonument text-gray1 text-center lg:text-left">
-        Discover the difference <br /> with NevesJR
+        {title ? title : "Discover the difference with NevesJR"}
       </h1>
       <Button
         onClick={() => router.push("/BookATrip")}
@@ -24,11 +31,20 @@ export default function Discover({ isInService }: DiscoverProps) {
       </Button>
     </div>
   ) : (
-    <div className="w-full bg-choffer h-96 bg-center lg:bg-current bg-cover">
+    <div
+      style={{
+        backgroundImage: `url(${
+          backgroundImage
+            ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${backgroundImage}`
+            : ChofferImage.src
+        })`,
+      }}
+      className="w-full h-96 bg-center lg:bg-current bg-cover"
+    >
       <div className="w-full h-96 bg-gradient-to-l flex items-center justify-center from-transparent via-gray4 via-80% to-black">
         <div className="w-[90%] lg:w-[80%] flex flex-col gap-4 lg:gap-5 text-left">
           <h1 className="text-2xl lg:text-3xl font-ppMonument text-gray1 leading-s50 lg:leading-s56">
-            Discover the <br /> difference with <br /> NevesJR
+            {title ? title : "Discover the difference with NevesJR"}
           </h1>
           <div className="w-full">
             <Button

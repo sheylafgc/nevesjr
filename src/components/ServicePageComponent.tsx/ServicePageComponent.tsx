@@ -12,6 +12,7 @@ import { OurServicesDataProps } from "@/src/domain/OurServices.ts/OurServices";
 import Loading from "../Loading/Loading";
 import { useLocale, useTranslations } from "next-intl";
 import HtmlRerender from "../HtmlRerender/HtmlRerender";
+import { getSocialMedia } from "@/src/domain/Content/SociaMedia";
 
 export default function ServicePageComponent() {
   const tToast = useTranslations("Toasts");
@@ -43,6 +44,23 @@ export default function ServicePageComponent() {
     enabled: !!serviceId,
   });
 
+  const { data: socialMedias } = useQuery({
+    queryKey: ["getSocialMedia", locale],
+    queryFn: async () => {
+      const data = await getSocialMedia({ locale });
+      return data;
+    },
+  });
+  const whatsapp = socialMedias ? socialMedias[0] : null;
+
+  const linkedin = socialMedias?.find(
+    (media) => media.label.toLowerCase() === "linkedin"
+  );
+
+  const facebook = socialMedias?.find(
+    (media) => media.label.toLowerCase() === "facebook"
+  );
+
   const copyCurrentUrl = () => {
     const url = window.location.href;
     navigator.clipboard
@@ -68,9 +86,12 @@ export default function ServicePageComponent() {
   if (!serviceDetails) return <div>Service not found</div>;
 
   const socialLinks = [
-    { icon: <FaFacebookF size={20} />, href: "#" },
-    { icon: <FaLinkedinIn size={20} />, href: "#" },
-    { icon: <FaWhatsapp size={20} />, href: "#" },
+    { icon: <FaFacebookF size={20} />, href: facebook?.value },
+    { icon: <FaLinkedinIn size={20} />, href: linkedin?.value },
+    {
+      icon: <FaWhatsapp size={20} />,
+      href: `https://wa.me/${whatsapp?.value}`,
+    },
   ];
 
   return (
@@ -89,7 +110,7 @@ export default function ServicePageComponent() {
             {socialLinks.map((social, index) => (
               <Link
                 key={index}
-                href={social.href}
+                href={social.href || ""}
                 className="text-white rounded-full bg-gray2 p-3 hover:bg-gray-600 transition-colors"
               >
                 {social.icon}

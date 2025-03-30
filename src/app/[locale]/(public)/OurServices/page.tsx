@@ -15,6 +15,8 @@ type OurServicesPageProps = {
   section1_subtitle: string;
   section1_image: string;
   section2_services: OurServicesDataProps[];
+  section3_title: string;
+  section3_banner: string;
 };
 
 function OurServicesItem() {
@@ -115,7 +117,10 @@ function OurServicesItem() {
         ))}
       </div>
 
-      <Discover />
+      <Discover
+        backgroundImage={pageData?.section3_banner}
+        title={pageData?.section3_title}
+      />
     </div>
   );
 }

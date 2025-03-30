@@ -54,7 +54,7 @@ export default function About() {
       <div className="w-full flex justify-center items-center lg:py-0 py-20 lg:h-[540px] bg-gradient-to-r from-gray4 to-black">
         <div className="lg:w-[80%] w-[90%] flex flex-col lg:flex-row items-center justify-around mt-20 gap-3">
           <div className="flex flex-col items-start justify-between gap-2">
-            <h1 className="text-3xl font-ppMonument text-gray1">
+            <h1 className="text-3xl font-ppMonument text-gray1 whitespace-pre-line">
               {pageData?.section1_title}
             </h1>
             <HtmlRerender
@@ -74,7 +74,7 @@ export default function About() {
 
       <div className="lg:w-[80%] w-[90%] flex flex-col lg:flex-row justify-between items-center lg:h-[600px] lg:py-0 py-20">
         <div className="w-full flex flex-col lg:flex-row justify-between items-end lg:gap-0 gap-3">
-          <h1 className="font-ppMonument text-3xl text-black leading-s50">
+          <h1 className="font-ppMonument text-3xl text-black leading-s50 whitespace-pre-line">
             {pageData?.section2_title}
           </h1>
           <HtmlRerender
@@ -96,7 +96,7 @@ export default function About() {
             className="rounded-xl"
           />
           <div className="flex flex-col">
-            <h1 className="font-ppMonument leading-s50 text-3xl text-gray1">
+            <h1 className="font-ppMonument leading-s50 text-3xl text-gray1 whitespace-pre-line">
               {pageData?.section3_title}
             </h1>
             <HtmlRerender
@@ -110,7 +110,7 @@ export default function About() {
       <div className="w-full flex flex-col lg:flex-row justify-center items-center lg:h-[600px] my-20 lg:my-16">
         <div className="lg:w-[80%] w-[90%] flex flex-col lg:flex-row justify-between items-center rounded-xl shadow-sm bg-gray1">
           <div className="flex flex-col items-start pt-16 p-5 lg:p-10">
-            <h1 className="leading-s50 font-ppMonument text-black text-3xl mb-3 lg:mb-10">
+            <h1 className="leading-s50 font-ppMonument text-black text-3xl mb-3 lg:mb-10 whitespace-pre-line">
               {pageData?.section4_title}
             </h1>
             <HtmlRerender
@@ -133,7 +133,7 @@ export default function About() {
       <div className="w-full bg-gray1 lg:h-screen lg:py-0 py-20 flex flex-col justify-center items-center">
         <div className="lg:w-[80%] w-[90%] flex flex-col justify-center items-center">
           <div className="flex flex-col items-center justify-between gap-8">
-            <h1 className="text-black font-ppMonument text-3xl">
+            <h1 className="text-black font-ppMonument text-3xl whitespace-pre-line">
               {pageData?.section5_title}
             </h1>
             <HtmlRerender
@@ -158,8 +158,10 @@ export default function About() {
                   alt={person.name}
                   className="rounded-full mb-5"
                 />
-                <h1 className="text-gray2">{person.name}</h1>
-                <span className="text-gray2 text-sm font-light">
+                <h1 className="text-gray2 whitespace-pre-line">
+                  {person.name}
+                </h1>
+                <span className="text-gray2 text-sm font-light whitespace-pre-line">
                   {person.role}
                 </span>
               </div>
@@ -168,7 +170,10 @@ export default function About() {
         </div>
       </div>
 
-      <Discover />
+      <Discover
+        backgroundImage={pageData?.section6_banner}
+        title={pageData?.section6_title}
+      />
     </div>
   );
 }

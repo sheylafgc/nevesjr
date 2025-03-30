@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import InputText from "@/components/InputText/InputText";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import { MdLuggage } from "react-icons/md";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdLocationSearching } from "react-icons/md";
 
-import { Suspense, useCallback, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -40,11 +41,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Discover from "@/components/Discover/Discover";
-import { useQuery } from "@tanstack/react-query";
-import { getAskedQuestions } from "@/src/domain/AskedQuestions/AskedQuestionsService";
-import { getOurServices } from "@/src/domain/OurServices.ts/OurServices";
-import { getFeedback } from "@/src/domain/Feedback/Feedback";
-import { getVehicles } from "@/src/domain/Vehicles/Vehicles";
+import { OurServicesDataProps } from "@/src/domain/OurServices.ts/OurServices";
 import Loading from "@/components/Loading/Loading";
 import TimePicker from "@/components/TimePicker/TimePicker";
 import DurationPicker from "@/components/DurationPicker/DurationPicker";
@@ -53,11 +50,67 @@ import {
   Autocomplete,
   Libraries,
 } from "@react-google-maps/api";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import Autoplay from "embla-carousel-autoplay";
+import { api } from "@/src/api/api";
+import Frame1 from "@/public/frame1.svg";
+import HtmlRerender from "@/src/components/HtmlRerender/HtmlRerender";
+
+type HomePageData = {
+  section1_banner: string;
+  section1_title: string;
+  section2_title: string;
+  section2_image: string;
+  section2_description: string;
+  section2_services: OurServicesDataProps[];
+  section3_title: string;
+  section3_image: string;
+  differentials: [
+    {
+      id: number;
+      title: string;
+      description: string;
+    }
+  ];
+  section4_image: string;
+  section4_title: string;
+  section4_description: string;
+  section5_title: string;
+  section5_subtitle: string;
+  section5_feedbacks: [
+    {
+      id: number;
+      name: string;
+      role: string;
+      opinion: string;
+      user_image: string;
+    }
+  ];
+  section6_title: string;
+  section6_subtitle: string;
+  section6_vehicles: [
+    {
+      id: number;
+      car_image: string;
+      car_name: string;
+      car_type: string;
+      quantity_luggage: number;
+      quantity_seats: number;
+    }
+  ];
+  section7_title: string;
+  section7_frequently_questions: [
+    {
+      id: number;
+      question: string;
+      answer: string;
+    }
+  ];
+  section8_title: string;
+  section8_banner: string;
+};
 
 function HomeComponent() {
   const t = useTranslations("HomePage");
@@ -71,11 +124,24 @@ function HomeComponent() {
   const [selectedDuration, setSelectedDuration] = useState<
     string | undefined
   >();
+  const [pageData, setPageData] = useState<HomePageData | null>(null);
   const fromRef = useRef(null);
   const toRef = useRef(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get<HomePageData>(
+        `/content/home-page/?lang=${locale}`
+      );
+      console.log(data);
+      setPageData(data);
+    };
+
+    fetchData();
+  }, []);
 
   const createQueryString = useCallback(
     (name: string, value: string | number | boolean) => {
@@ -136,47 +202,29 @@ function HomeComponent() {
     console.log("Selected Time:", selectedTime);
   };
 
-  const { data: ourServices, isFetching: isFetchingOurServices } = useQuery({
-    queryKey: ["getOurServices", locale],
-    queryFn: async () => {
-      const data = getOurServices({ locale });
-      return data;
-    },
-  });
-
-  const { data: feedbacks, isFetching: isFetchingFeedbacks } = useQuery({
-    queryKey: ["getFeedbacks"],
-    queryFn: getFeedback,
-  });
-
-  const { data: vehicles, isFetching: isFetchingVehicles } = useQuery({
-    queryKey: ["getVehicles", locale],
-    queryFn: async () => {
-      const data = getVehicles({ locale });
-      return data;
-    },
-  });
-
-  const { data: askedQuestions, isFetching: isFetchingAskedQuestions } =
-    useQuery({
-      queryKey: ["askedQuestions"],
-      queryFn: getAskedQuestions,
-    });
-
   if (!isLoaded) {
     return <Loading />;
   }
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      <div className="w-full bg-frame1 bg-cover bg-center lg:h-auto">
+      <div
+        style={{
+          backgroundImage: `url(${
+            pageData?.section1_banner
+              ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${pageData.section1_banner}`
+              : Frame1
+          })`,
+        }}
+        className="w-full bg-cover bg-center lg:h-auto"
+      >
         <div className="bg-black/50 w-full h-full flex justify-center items-center">
-          <div className="flex lg:flex-row flex-col items-center lg:justify-between justify-center h-full lg:w-[80%] w-[90%] lg:px-5 py-40">
-            <h1 className="text-gray1 lg:w-auto w-full lg:text-[60px] lg:leading-s84 text-3xl font-ppMonument text-left mb-8 lg:mb-0">
-              High-end <br /> private chauffeur <br /> service
+          <div className="flex lg:flex-row flex-col items-center lg:justify-between justify-center h-full lg:w-[80%] w-[90%] gap-5 py-40">
+            <h1 className="text-gray1 lg:flex-[6] lg:w-auto w-full lg:text-[60px] lg:leading-s84 text-3xl font-ppMonument text-left mb-8 lg:mb-0 whitespace-pre-line">
+              {pageData?.section1_title}
             </h1>
 
-            <div className="bg-gray1 rounded-xl w-full lg:w-[600px] flex flex-col items-center justify-center p-10 lg:p-14 h-[500px] lg:h-[450px]">
+            <div className="bg-gray1 lg:flex-[4] rounded-xl w-full lg:w-[600px] flex flex-col items-center justify-center p-10 lg:p-14 h-[500px] lg:h-[450px]">
               <div className="flex flex-col items-center justify-center w-full">
                 <h1 className="text-center font-ppMonument text-2xl lg:text-3xl mb-4">
                   {t("section1.card_title")}
@@ -293,8 +341,8 @@ function HomeComponent() {
       <div className="bg-gray1 lg:-mt-20 lg:rounded-t-xl flex flex-col items-center w-full lg:w-[80%] p-6 lg:pt-3 lg:pr-28 lg:pl-28 lg:pb-28">
         <div className="flex flex-col lg:flex-row w-full justify-between items-center">
           <div className="w-full flex flex-col justify-between mb-6 lg:mb-0">
-            <h1 className="font-ppMonument text-3xl lg:text-4xl mt-6 lg:mt-14 text-left">
-              Discover Our <br /> Services
+            <h1 className="font-ppMonument text-3xl lg:text-4xl mt-6 lg:mt-14 text-left whitespace-pre-line">
+              {pageData?.section2_title}
             </h1>
             <div className="h-[1px] w-full lg:w-[500px] bg-gray2 mt-4 lg:mt-0" />
           </div>
@@ -302,7 +350,11 @@ function HomeComponent() {
             <Image
               width={300}
               height={300}
-              src={CarImage}
+              src={
+                pageData?.section1_banner
+                  ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${pageData.section2_image}`
+                  : CarImage
+              }
               alt="car image"
               className="w-full h-auto"
             />
@@ -317,42 +369,37 @@ function HomeComponent() {
           buttonColor="black"
         >
           <CarouselContent>
-            {ourServices?.map((service) => (
+            {pageData?.section2_services.map((service) => (
               <CarouselItem
                 key={service.id}
                 className="flex items-center justify-center mb-6 lg:basis-1/2 lg:ml-8 lg:mt-8"
               >
-                {isFetchingOurServices ? (
-                  <Skeleton className="w-full max-w-[441px] h-[257px] rounded-3xl" />
-                ) : (
-                  <div
-                    style={{
-                      backgroundImage: `url(${
-                        (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
-                          service.image || ""
-                      })`,
-                    }}
-                    className="lg:w-full w-[95%] flex justify-end items-start p-4 flex-col bg-cover bg-center max-w-[441px] h-[257px] rounded-3xl"
+                <div
+                  style={{
+                    backgroundImage: `url(${
+                      (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
+                        service.image || ""
+                    })`,
+                  }}
+                  className="lg:w-full w-[95%] flex justify-end items-start p-4 flex-col bg-cover bg-center max-w-[441px] h-[257px] rounded-3xl"
+                >
+                  <span className="font-acumin text-gray1 text-lg lg:text-xl whitespace-pre-line">
+                    {service.title}
+                  </span>
+                  <Link
+                    href={`OurServices/ServicePage/${service.id}`}
+                    className="bg-gray2 text-gray1 py-2 px-4 lg:px-5 text-sm lg:text-base rounded-full mt-2"
                   >
-                    <span className="font-acumin text-gray1 text-lg lg:text-xl">
-                      {service.title}
-                    </span>
-                    <Link
-                      href={`OurServices/ServicePage/${service.id}`}
-                      className="bg-gray2 text-gray1 py-2 px-4 lg:px-5 text-sm lg:text-base rounded-full mt-2"
-                    >
-                      {tButton("see_more")}
-                    </Link>
-                  </div>
-                )}
+                    {tButton("see_more")}
+                  </Link>
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
           <div className="flex flex-col lg:flex-row-reverse items-center justify-between mt-3 lg:mt-8 w-full gap-6">
             <div className="text-center lg:text-left mb-4 lg:mb-0 order-1">
-              <p className="text-sm text-gray2 font-light leading-relaxed">
-                Experience premium executive chauffeur services tailored for
-                comfort, style, and reliability—perfect for your every journey.
+              <p className="text-sm text-gray2 font-light leading-relaxed whitespace-pre-line">
+                {pageData?.section2_description}
               </p>
             </div>
             <div className="w-full flex flex-row justify-between items-center lg:flex-row">
@@ -374,15 +421,17 @@ function HomeComponent() {
       <div className="min-h-screen w-full bg-gradient-to-r from-gray4 to-black flex flex-col items-center justify-center py-16 lg:py-32">
         <div className="flex flex-col lg:flex-row w-[90%] lg:w-[80%] justify-between items-center lg:items-end mb-10 lg:mb-14">
           <h1 className="w-full font-ppMonument text-4xl lg:text-6xl text-gray1 leading-relaxed lg:leading-s84 text-left mb-8 lg:mb-0">
-            Reasons <br /> to book <br />{" "}
-            <span className="text-gray3 underline">nevesjr</span> <br />{" "}
-            services
+            <HtmlRerender htmlString={pageData?.section3_title || ""} />
           </h1>
           <Image
             width={464}
             height={533}
             className="h-[500px] rounded-3xl w-full lg:w-[60%] object-cover"
-            src={ManInACar}
+            src={
+              pageData?.section3_image
+                ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${pageData.section3_image}`
+                : ManInACar
+            }
             alt="man in a car"
           />
         </div>
@@ -403,25 +452,7 @@ function HomeComponent() {
               className="w-full mt-6 lg:mt-8 lg:hidden block"
             >
               <CarouselContent>
-                {[
-                  {
-                    title: "Safety",
-                    description:
-                      "Your security is our priority, ensuring peace of mind every mile.",
-                  },
-                  {
-                    title: "Reliability",
-                    description: "Always on time, every time.",
-                  },
-                  {
-                    title: "Commitment",
-                    description: "Driven to exceed your expectations.",
-                  },
-                  {
-                    title: "Quality",
-                    description: "Luxury travel, perfected for you.",
-                  },
-                ].map((item, index) => (
+                {pageData?.differentials.map((item, index) => (
                   <CarouselItem key={index} className="basis-full">
                     <div className="flex flex-col justify-center items-center text-center w-full px-2 pt-16">
                       <div className="absolute bottom-[60%] flex items-center justify-center w-full h-[2px] bg-gray2 my-10 lg:hidden">
@@ -432,10 +463,10 @@ function HomeComponent() {
                         <div className="w-3 h-3 bg-gray2 rounded-full z-10" />
                       </div>
 
-                      <h1 className="text-gray1 font-bold text-xl lg:text-2xl mt-4 lg:mt-6 mb-2">
+                      <h1 className="text-gray1 font-bold text-xl lg:text-2xl mt-4 lg:mt-6 mb-2 whitespace-pre-line">
                         {item.title}
                       </h1>
-                      <p className="text-sm lg:text-base text-gray1 font-light">
+                      <p className="text-sm lg:text-base text-gray1 font-light whitespace-pre-line">
                         {item.description}
                       </p>
                     </div>
@@ -443,25 +474,7 @@ function HomeComponent() {
                 ))}
               </CarouselContent>
             </Carousel>
-            {[
-              {
-                title: "Safety",
-                description:
-                  "Your security is our priority, ensuring peace of mind every mile.",
-              },
-              {
-                title: "Reliability",
-                description: "Always on time, every time.",
-              },
-              {
-                title: "Commitment",
-                description: "Driven to exceed your expectations.",
-              },
-              {
-                title: "Quality",
-                description: "Luxury travel, perfected for you.",
-              },
-            ].map((item, index) => (
+            {pageData?.differentials.map((item, index) => (
               <div
                 key={index}
                 className="relative hidden lg:flex flex-col items-center text-center w-full lg:w-1/4 px-2 lg:px-4 z-10"
@@ -474,10 +487,10 @@ function HomeComponent() {
                   <div className="w-3 h-3 bg-gray2 rounded-full z-10" />
                 </div>
 
-                <h1 className="text-gray1 font-bold text-xl lg:text-2xl mt-4 lg:mt-6 mb-2">
+                <h1 className="text-gray1 font-bold text-xl lg:text-2xl mt-4 lg:mt-6 mb-2 whitespace-pre-line">
                   {item.title}
                 </h1>
-                <p className="text-sm lg:text-base text-gray1 font-light">
+                <p className="text-sm lg:text-base text-gray1 font-light whitespace-pre-line">
                   {item.description}
                 </p>
               </div>
@@ -488,27 +501,26 @@ function HomeComponent() {
 
       <div className="w-[90%] lg:w-[80%] lg:h-auto lg:py-32 py-32 flex flex-col lg:flex-row justify-center items-center">
         <Image
-          src={TaxiCar}
+          src={
+            pageData?.section4_image
+              ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${pageData.section4_image}`
+              : TaxiCar
+          }
           width={764.4}
           height={509.6}
           alt="taxi driver female client"
-          className="lg:rounded-3xl rounded-t-3xl brightness-75 "
+          className="lg:rounded-3xl rounded-t-3xl brightness-75"
         />
-        <div className="brightness-100 h-[417px] lg:w-[437px] lg:-ml-[160px] lg:mt-[73px] bg-gradient-to-r flex flex-col justify-center items-start rounded-b-3xl from-gray2 lg:rounded-r-xl lg:rounded-t-xl to-gray4 gap-8 shadow-md">
-          <div className=" p-5">
-            <h1 className="font-ppMonument text-3xl leading-[56.36px] text-gray1">
-              Excellence in Executive Transport
+        <div className="brightness-100 h-[417px] lg:w-[417px] lg:-ml-[160px] lg:mt-[73px] bg-gradient-to-r flex flex-col justify-center items-start rounded-b-3xl from-gray2 lg:rounded-r-xl lg:rounded-t-xl to-gray4 gap-8 shadow-md">
+          <div className="p-5">
+            <h1 className="font-ppMonument text-3xl leading-[56.36px] text-gray1 whitespace-pre-line">
+              {pageData?.section4_title}
             </h1>
             <div className="flex flex-col justify-center items-start gap-4">
-              <p className="text-gray1 text-xs font-light">
-                Neves JR is dedicated to redefining executive transportation.
-                With a focus on safety, reliability, and unmatched service
-                quality, we ensure every journey is seamless and sophisticated.
-              </p>
-              <p className="text-gray1 text-xs font-light">
-                Our experienced chauffeurs and premium vehicles reflect our
-                commitment to delivering excellence every mile.
-              </p>
+              <HtmlRerender
+                htmlString={pageData?.section4_description || ""}
+                className="text-gray1 text-xs font-light"
+              />
               <Link
                 href={"/Blog"}
                 className="bg-black text-gray1 rounded-full py-3 px-5 hover:opacity-80"
@@ -523,172 +535,156 @@ function HomeComponent() {
       <div className="w-full lg:h-auto bg-gradient-to-r from-gray4 to-black flex flex-col items-center justify-center py-32">
         <div className="w-[90%] lg:w-[80%]">
           <div className="flex lg:flex-row flex-col justify-between items-start gap-3 mb-14">
-            <h1 className="font-ppMonument text-3xl leading-s56 text-gray1">
-              What people <br /> says about us
+            <h1 className="font-ppMonument text-3xl leading-s56 text-gray1 whitespace-pre-line">
+              {pageData?.section5_title}
             </h1>
-            <p className="text-lg text-gray1 font-light">
-              Hear from our satisfied clients who trust{" "}
-              <span className="font-bold">NevesJR</span> for <br /> exceptional
-              service, unmatched reliability, and luxurious <br /> travel
-              experiences.
-            </p>
+            <HtmlRerender
+              htmlString={pageData?.section5_subtitle || ""}
+              className="text-lg text-gray1 font-light"
+            />
           </div>
 
           <div className="hidden lg:block">
-            {isFetchingFeedbacks ? (
-              <Loading variant="light" />
-            ) : (
-              <Carousel
-                opts={{
-                  loop: true,
-                }}
-                arrowsOrientation="normal"
-                buttonColor="white"
-                className="w-full"
-              >
-                <CarouselContent className="md:gap-5">
-                  {feedbacks?.map((item) => (
-                    <CarouselItem
-                      key={item.id}
-                      className="flex h-80 md:basis-1/2 basis-1/3 lg:basis-teste items-center justify-center flex-col relative overflow-visible"
-                    >
-                      <Image
-                        src={
-                          (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
-                            item.user_image || ""
-                        }
-                        alt={item.name}
-                        width={70}
-                        height={70}
-                        unoptimized
-                        className="rounded-full absolute top-0"
-                      />
-                      <div className="w-[400px] h-[250px] flex flex-col justify-center item-center bg-gray1 rounded-xl p-10">
-                        <div className="flex flex-col items-start justify-between gap-4">
-                          <BiSolidQuoteLeft className="w-8 h-8 text-gray2" />
-                          <span className="font-light text-xs">
-                            {item.opinion}
+            <Carousel
+              opts={{
+                loop: true,
+              }}
+              arrowsOrientation="normal"
+              buttonColor="white"
+              className="w-full"
+            >
+              <CarouselContent className="md:gap-5">
+                {pageData?.section5_feedbacks.map((item) => (
+                  <CarouselItem
+                    key={item.id}
+                    className="flex h-80 md:basis-1/2 basis-1/3 lg:basis-teste items-center justify-center flex-col relative overflow-visible"
+                  >
+                    <Image
+                      src={
+                        (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
+                          item.user_image || ""
+                      }
+                      alt={item.name}
+                      width={70}
+                      height={70}
+                      unoptimized
+                      className="rounded-full absolute top-0"
+                    />
+                    <div className="w-[400px] h-[250px] flex flex-col justify-center item-center bg-gray1 rounded-xl p-10">
+                      <div className="flex flex-col items-start justify-between gap-4">
+                        <BiSolidQuoteLeft className="w-8 h-8 text-gray2" />
+                        <span className="font-light text-xs whitespace-pre-line">
+                          {item.opinion}
+                        </span>
+                        <Separator className="bg-gray2" />
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray2 font-bold text-xs whitespace-pre-line">
+                            {item.name}
                           </span>
-                          <Separator className="bg-gray2" />
-                          <div className="flex flex-col gap-1">
-                            <span className="text-gray2 font-bold text-xs">
-                              {item.name}
-                            </span>
-                            <span className="text-gray2 font-light text-xs">
-                              {item.occupation}
-                            </span>
-                          </div>
+                          <span className="text-gray2 font-light text-xs whitespace-pre-line">
+                            {item.role}
+                          </span>
                         </div>
                       </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <div className="flex-row flex gap-6 justify-end">
-                  <CarouselPrevious className="" />
-                  <CarouselNext />
-                </div>
-              </Carousel>
-            )}
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex-row flex gap-6 justify-end">
+                <CarouselPrevious className="" />
+                <CarouselNext />
+              </div>
+            </Carousel>
           </div>
 
           <div className="lg:hidden">
-            {isFetchingFeedbacks ? (
-              <Loading variant="light" />
-            ) : (
-              feedbacks?.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col items-center mb-10 w-full lg:w-1/4 px-2 lg:px-4 z-10 py-8"
-                >
-                  <Image
-                    src={
-                      (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
-                        item.user_image || ""
-                    }
-                    alt={item.name}
-                    width={70}
-                    height={70}
-                    unoptimized
-                    className="rounded-full -mt-10 absolute"
-                  />
-                  <div className="w-full bg-gray1 rounded-xl p-6 flex flex-col justify-center item-center">
-                    <div className="flex flex-col items-start justify-between gap-4">
-                      <BiSolidQuoteLeft className="w-8 h-8 text-gray2" />
-                      <span className="font-light text-xs">{item.opinion}</span>
-                      <Separator className="bg-gray2" />
-                      <div className="flex flex-col gap-1">
-                        <span className="text-gray2 font-bold text-xs">
-                          {item.name}
-                        </span>
-                        <span className="text-gray2 font-light text-xs">
-                          {item.occupation}
-                        </span>
-                      </div>
+            {pageData?.section5_feedbacks?.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col items-center mb-10 w-full lg:w-1/4 px-2 lg:px-4 z-10 py-8"
+              >
+                <Image
+                  src={
+                    (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
+                      item.user_image || ""
+                  }
+                  alt={item.name}
+                  width={70}
+                  height={70}
+                  unoptimized
+                  className="rounded-full -mt-10 absolute"
+                />
+                <div className="w-full bg-gray1 rounded-xl p-6 flex flex-col justify-center item-center">
+                  <div className="flex flex-col items-start justify-between gap-4">
+                    <BiSolidQuoteLeft className="w-8 h-8 text-gray2" />
+                    <span className="font-light text-xs whitespace-pre-line">
+                      {item.opinion}
+                    </span>
+                    <Separator className="bg-gray2" />
+                    <div className="flex flex-col gap-1">
+                      <span className="text-gray2 font-bold text-xs whitespace-pre-line">
+                        {item.name}
+                      </span>
+                      <span className="text-gray2 font-light text-xs whitespace-pre-line">
+                        {item.role}
+                      </span>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       <div className="w-[90%] lg:w-[80%] flex flex-col justify-center items-center h-auto py-32">
         <div className="w-full flex flex-col lg:flex-row justify-between items-start">
-          <h1 className="font-ppMonument text-3xl mb-4 lg:mb-0">Our fleet</h1>
-          <span className="text-sm font-light">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br /> sed
-            do eiusmod tempor incididunt ut labore et dolore <br /> magna
-            aliqua.{" "}
-          </span>
+          <h1 className="font-ppMonument text-3xl mb-4 lg:mb-0 whitespace-pre-line">
+            {pageData?.section6_title}
+          </h1>
+          <HtmlRerender
+            htmlString={pageData?.section6_subtitle || ""}
+            className="text-sm font-light"
+          />
         </div>
         <div
-          className={`w-full lg:w-auto ${
-            isFetchingVehicles
-              ? "flex justify-center items-center"
-              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-row"
-          } gap-10 my-16`}
+          className={`w-full lg:w-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-row gap-10 my-16`}
         >
-          {vehicles?.map((car) =>
-            isFetchingVehicles ? (
-              <Skeleton
-                key={car.id}
-                className="lg:w-80 w-full lg:h-72 h-96 rounded-xl flex flex-col items-center justify-center gap-1"
+          {pageData?.section6_vehicles.map((car) => (
+            <div
+              key={car.id}
+              className="lg:w-80 w-full lg:h-72 h-96 bg-gray1 rounded-xl flex flex-col items-center justify-center gap-1"
+            >
+              <Image
+                width={220}
+                height={130}
+                src={
+                  (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + car.car_image ||
+                  ""
+                }
+                alt={car.car_name}
               />
-            ) : (
-              <div
-                key={car.id}
-                className="lg:w-80 w-full lg:h-72 h-96 bg-gray1 rounded-xl flex flex-col items-center justify-center gap-1"
-              >
-                <Image
-                  width={220}
-                  height={130}
-                  src={
-                    (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + car.car_image ||
-                    ""
-                  }
-                  alt={car.car_name}
-                />
-                <span className="text-gray2 font-bold mt-2">
-                  {car.car_name}
+              <span className="text-gray2 font-bold mt-2 whitespace-pre-line">
+                {car.car_name}
+              </span>
+              <span className="text-gray2 whitespace-pre-line">
+                {car.car_type}
+              </span>
+              <div className="w-20 flex flex-row justify-between items-center">
+                <span className="flex flex-row justify-between items-center">
+                  <MdPeopleAlt className="w-4 h-4 text-gray2 whitespace-pre-line" />
+                  {car.quantity_seats}
                 </span>
-                <span className="text-gray2">{car.car_type}</span>
-                <div className="w-20 flex flex-row justify-between items-center">
-                  <span className="flex flex-row justify-between items-center">
-                    <MdPeopleAlt className="w-4 h-4 text-gray2" />
-                    {car.quantity_seats}
-                  </span>
-                  <span className="flex flex-row justify-between items-center">
-                    <MdLuggage className="w-4 h-4 text-gray2" />
-                    {car.quantity_luggage}
-                  </span>
-                </div>
-                <Button className="px-4 bg-transparent border border-gray2 rounded-full text-gray2 hover:text-gray1 lg:mt-0 mt-8">
-                  {tButton("button_book_now")}
-                </Button>
+                <span className="flex flex-row justify-between items-center whitespace-pre-line">
+                  <MdLuggage className="w-4 h-4 text-gray2" />
+                  {car.quantity_luggage}
+                </span>
               </div>
-            )
-          )}
+              <Button className="px-4 bg-transparent border border-gray2 rounded-full text-gray2 hover:text-gray1 lg:mt-0 mt-8">
+                {tButton("button_book_now")}
+              </Button>
+            </div>
+          ))}
         </div>
 
         <div className="w-full flex justify-center items-center">
@@ -703,31 +699,27 @@ function HomeComponent() {
 
       <div className="w-full bg-gray1 flex justify-center items-center lg:h-screen py-20">
         <div className="w-[80%] flex flex-col justify-center items-center">
-          <h1 className="font-ppMonument text-3xl leading-s56 text-black">
-            Frequently asked questions
+          <h1 className="font-ppMonument text-3xl leading-s56 text-black whitespace-pre-line">
+            {pageData?.section7_title}
           </h1>
           <div className="w-full flex flex-col gap-4 my-16">
-            {isFetchingAskedQuestions ? (
-              <Loading />
-            ) : (
-              <Accordion type="single" collapsible>
-                {askedQuestions?.map((question) => (
-                  <AccordionItem
-                    className="mt-5"
-                    key={question.id}
-                    value={`item-${question.id}`}
-                  >
-                    <AccordionTrigger className="font-bold text-lg text-black">
-                      {question.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="font-light text-gray2">
-                      {question.answer}
-                    </AccordionContent>
-                    <Separator className="bg-gray2/50" />
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            )}
+            <Accordion type="single" collapsible>
+              {pageData?.section7_frequently_questions.map((question) => (
+                <AccordionItem
+                  className="mt-5"
+                  key={question.id}
+                  value={`item-${question.id}`}
+                >
+                  <AccordionTrigger className="font-bold text-lg text-black whitespace-pre-line">
+                    <HtmlRerender htmlString={question.question} />
+                  </AccordionTrigger>
+                  <AccordionContent className="font-light text-gray2 whitespace-pre-line">
+                    <HtmlRerender htmlString={question.answer} />
+                  </AccordionContent>
+                  <Separator className="bg-gray2/50 " />
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
           <div className="w-full flex justify-center items-center">
             <Button className="rounded-full">{tButton("see_more")}</Button>
@@ -735,7 +727,10 @@ function HomeComponent() {
         </div>
       </div>
 
-      <Discover />
+      <Discover
+        backgroundImage={pageData?.section8_banner}
+        title={pageData?.section8_title}
+      />
     </div>
   );
 }
