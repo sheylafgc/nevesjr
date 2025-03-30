@@ -5,8 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { FaFacebookF, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
-import { FaLink } from "react-icons/fa6";
+import { FaFacebookF, FaLinkedinIn, FaWhatsapp, FaLink } from "react-icons/fa";
 import { Bounce, toast } from "react-toastify";
 import Loading from "../Loading/Loading";
 import { useLocale, useTranslations } from "next-intl";
@@ -15,46 +14,42 @@ import { BlogProps } from "@/src/domain/Blog/BlogService";
 
 export default function BlogPageComponent() {
   const tToast = useTranslations("Toasts");
+  const params = useParams();
   const locale = useLocale();
-  const { blogId } = useParams();
-  const { data: blogDetails, isFetching } = useQuery({
-    queryKey: ["getBlogPage"],
+  const blogId = Array.isArray(params.blogId)
+    ? params.blogId[0]
+    : params.blogId;
+
+  const {
+    data: blogDetails,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ["getBlogPage", blogId, locale],
     queryFn: async () => {
-      if (blogId) {
-        try {
-          const { data } = await api.get<BlogProps>(
-            `/blog/${blogId}/?lang=${locale}`
-          );
-          return data;
-        } catch (error) {
-          console.error(error);
-        }
+      if (!blogId) return null;
+
+      try {
+        const { data } = await api.get<BlogProps>(
+          `/blog/${blogId}/?lang=${locale}`
+        );
+        return data;
+      } catch (err) {
+        console.error("Failed to fetch blog:", err);
+        throw err;
       }
     },
+    enabled: !!blogId,
   });
 
   const { data: socialMedia } = useQuery({
     queryKey: ["getSocialMediaContent", locale],
-    queryFn: async () => {
-      const data = await getSocialMedia({ locale });
-      return data;
-    },
+    queryFn: () => getSocialMedia({ locale }),
   });
 
-  const whatsapp = socialMedia ? socialMedia[0] : null;
-
-  const facebook = socialMedia?.find(
-    (media) => media.label.toLowerCase() === "facebook"
-  );
-
-  const linkedin = socialMedia?.find(
-    (media) => media.label.toLowerCase() === "linkedin"
-  );
-
-  function copyCurrentUrl() {
-    const url = window.location.href;
+  const copyCurrentUrl = () => {
     navigator.clipboard
-      .writeText(url)
+      .writeText(window.location.href)
       .then(() => {
         toast.success(tToast("URL_copied"), {
           position: "top-right",
@@ -68,53 +63,74 @@ export default function BlogPageComponent() {
           transition: Bounce,
         });
       })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
-      });
-  }
-  return isFetching ? (
-    <Loading />
-  ) : (
-    <div className="flex flex-col w-full justify-center items-center">
+      .catch(console.error);
+  };
+
+  if (isFetching) return <Loading />;
+  if (error) return <div>Error loading blog post</div>;
+  if (!blogDetails) return <div>Blog post not found</div>;
+
+  const socialLinks = [
+    {
+      icon: <FaFacebookF size={20} />,
+      href:
+        socialMedia?.find((m) => m.label.toLowerCase().includes("facebook"))
+          ?.value || "#",
+    },
+    {
+      icon: <FaLinkedinIn size={20} />,
+      href:
+        socialMedia?.find((m) => m.label.toLowerCase().includes("linkedin"))
+          ?.value || "#",
+    },
+    {
+      icon: <FaWhatsapp size={20} />,
+      href: `https://wa.me/${
+        socialMedia?.find((m) => m.label.toLowerCase().includes("whatsapp"))
+          ?.value || ""
+      }`,
+    },
+  ];
+
+  return (
+    <div className="flex flex-col items-center w-full">
       <div className="flex flex-col w-full h-[800px] lg:h-[700px] justify-center items-center bg-gradient-to-r from-gray4 to-black">
-        <div className="lg:w-[64%] w-[90%] flex flex-col justify-center items-center my-10">
-          <div className="w-full flex flex-row justify-around lg:justify-center items-center gap-3 mb-1">
+        <div className="lg:w-[64%] w-[90%] flex flex-col items-center my-10">
+          <div className="w-full flex justify-around lg:justify-center items-center gap-3 mb-1">
             <span className="bg-black rounded-full px-3 py-2 text-center text-gray1 text-sm">
-              {blogDetails?.category}
+              {blogDetails.category}
             </span>
             <span className="text-center text-gray1 text-sm">
-              {blogDetails?.created_at}
+              {blogDetails.created_at}
             </span>
           </div>
-          <div className="lg:w-auto w-full flex flex-col justify-center items-center gap-6">
-            <p className="font-ppMonument text-center text-3xl text-gray1 leading-s50 whitespace-pre-line">
-              {blogDetails?.title}
+
+          <div className="lg:w-auto w-full flex flex-col items-center gap-6 text-center">
+            <h1 className="font-ppMonument text-3xl text-gray1 leading-s50 whitespace-pre-line">
+              {blogDetails.title}
+            </h1>
+
+            <p className="text-sm text-gray1 whitespace-pre-line">
+              {blogDetails.subtitle}
             </p>
-            <p className="text-center text-sm text-gray1 whitespace-pre-line">
-              {blogDetails?.subtitle}
-            </p>
-            <div className="flex flex-row justify-between items-center gap-5">
-              <Link
-                href={`${facebook?.value}`}
-                className="text-white rounded-full bg-gray2 p-3"
-              >
-                <FaFacebookF size={20} />
-              </Link>
-              <Link
-                href={`${linkedin?.value}`}
-                className="text-white rounded-full bg-gray2 p-3"
-              >
-                <FaLinkedinIn size={20} />
-              </Link>
-              <Link
-                href={`https://wa.me/${whatsapp?.value}`}
-                className="text-white rounded-full bg-gray2 p-3"
-              >
-                <FaWhatsapp size={20} />
-              </Link>
+
+            <div className="flex gap-5">
+              {socialLinks.map((social, index) => (
+                <Link
+                  key={index}
+                  href={social.href}
+                  className="text-white rounded-full bg-gray2 p-3 hover:bg-gray-600 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {social.icon}
+                </Link>
+              ))}
+
               <button
                 onClick={copyCurrentUrl}
-                className="bg-gray2 rounded-full p-3 shadow-none text-white"
+                className="bg-gray2 rounded-full p-3 text-white hover:bg-gray-600 transition-colors"
+                aria-label="Copy link"
               >
                 <FaLink size={20} />
               </button>
@@ -123,25 +139,24 @@ export default function BlogPageComponent() {
         </div>
       </div>
 
-      <div className="lg:w-[60%] w-[90%] flex flex-col justify-between items-center -mt-24">
+      <div className="lg:w-[60%] w-[90%] flex flex-col items-center -mt-24">
         <Image
-          src={
-            (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") + blogDetails?.image ||
-            "/public/TravelImage.svg"
-          }
-          width={600}
-          height={200}
-          alt={blogDetails?.title || "Image not found"}
+          src={`${process.env.NEXT_PUBLIC_IMAGE_URL || ""}${blogDetails.image}`}
+          width={1200}
+          height={630}
+          alt={blogDetails.title}
           className="w-full h-[400px] object-cover rounded-xl"
+          priority
         />
 
-        <div className="w-full flex flex-col justify-between items-center mt-10 mb-16 gap-5">
+        <div className="w-full my-16 space-y-5">
           <p className="text-black text-sm whitespace-pre-line">
-            {blogDetails?.description}
+            {blogDetails.description}
           </p>
         </div>
       </div>
-      <RelatedPosts blogId={blogDetails?.id ?? 1} />
+
+      <RelatedPosts blogId={blogDetails.id} />
     </div>
   );
 }

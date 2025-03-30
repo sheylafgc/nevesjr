@@ -5,20 +5,31 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export async function generateStaticParams() {
-  const res = await getOurServices();
-  if (!res) return [];
-  return res.map((service: { id: number }) => ({
-    serviceId: service.id.toString(),
-  }));
+  const locales = ["en", "pt", "es"];
+  const allServices = await Promise.all(
+    locales.map((locale) => getOurServices({ locale }))
+  );
+
+  return locales.flatMap(
+    (locale, index) =>
+      allServices[index]?.map((service: { id: number }) => ({
+        locale,
+        serviceId: service.id.toString(),
+      })) || []
+  );
 }
 
 export default async function ServicePage({
   params,
 }: {
-  params: Promise<{ serviceId: string }>;
+  params: Promise<{ locale: string; serviceId: string }>;
 }) {
-  const { serviceId } = await params;
-  if (!serviceId) {
+  const { locale, serviceId } = await params;
+  const service = await getOurServices({ locale: locale }).then((service) =>
+    service?.find((s) => s.id.toString() === serviceId)
+  );
+
+  if (!service) {
     return notFound();
   }
 

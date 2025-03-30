@@ -1,10 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Bounce, toast } from "react-toastify";
-import { FaFacebookF } from "react-icons/fa";
-import { FaLinkedinIn } from "react-icons/fa";
-import { FaWhatsapp } from "react-icons/fa";
-import { FaLink } from "react-icons/fa6";
+import { FaFacebookF, FaLinkedinIn, FaWhatsapp, FaLink } from "react-icons/fa";
 import Image from "next/image";
 import Discover from "@/components/Discover/Discover";
 import MoreServices from "@/components/MoreServices/MoreServices";
@@ -18,24 +15,35 @@ import HtmlRerender from "../HtmlRerender/HtmlRerender";
 
 export default function ServicePageComponent() {
   const tToast = useTranslations("Toasts");
-  const { serviceId } = useParams();
+  const params = useParams();
   const locale = useLocale();
-  const { data: serviceDetails, isFetching } = useQuery({
-    queryKey: ["getOurServiceById"],
+  const serviceId = Array.isArray(params.serviceId)
+    ? params.serviceId[0]
+    : params.serviceId;
+
+  const {
+    data: serviceDetails,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ["getOurServiceById", serviceId, locale],
     queryFn: async () => {
-      if (serviceId) {
-        try {
-          const { data } = await api.get<OurServicesDataProps>(
-            `/our-service/${serviceId}/?lang=${locale}`
-          );
-          return data;
-        } catch (error) {
-          console.error(error);
-        }
+      if (!serviceId) return null;
+
+      try {
+        const { data } = await api.get<OurServicesDataProps>(
+          `/our-service/${serviceId}/?lang=${locale}`
+        );
+        return data;
+      } catch (err) {
+        console.error("Failed to fetch service:", err);
+        throw err;
       }
     },
+    enabled: !!serviceId,
   });
-  function copyCurrentUrl() {
+
+  const copyCurrentUrl = () => {
     const url = window.location.href;
     navigator.clipboard
       .writeText(url)
@@ -52,67 +60,80 @@ export default function ServicePageComponent() {
           transition: Bounce,
         });
       })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
-      });
-  }
-  return isFetching ? (
-    <Loading />
-  ) : (
-    <div className="flex flex-col justify-center items-center w-full">
-      <div className="lg:w-[80%] w-[90%] flex flex-col justify-center items-center lg:py-52 pt-52">
-        <div className="w-[80%] flex flex-col justify-center items-center gap-5">
-          <h1 className="text-3xl text-black font-ppMonument lg:whitespace-nowrap whitespace-pre-line text-center">
-            {serviceDetails?.title}
+      .catch(console.error);
+  };
+
+  if (isFetching) return <Loading />;
+  if (error) return <div>Error loading service details</div>;
+  if (!serviceDetails) return <div>Service not found</div>;
+
+  const socialLinks = [
+    { icon: <FaFacebookF size={20} />, href: "#" },
+    { icon: <FaLinkedinIn size={20} />, href: "#" },
+    { icon: <FaWhatsapp size={20} />, href: "#" },
+  ];
+
+  return (
+    <div className="flex flex-col items-center w-full">
+      <div className="lg:w-[80%] w-[90%] flex flex-col items-center lg:py-52 pt-52">
+        <div className="w-[80%] flex flex-col items-center gap-5 text-center">
+          <h1 className="text-3xl text-black font-ppMonument lg:whitespace-nowrap whitespace-pre-line">
+            {serviceDetails.title}
           </h1>
-          <p className="text-gray2 text-sm text-center whitespace-pre-line">
-            {serviceDetails?.subtitle}
+
+          <p className="text-gray2 text-sm whitespace-pre-line">
+            {serviceDetails.subtitle}
           </p>
-          <div className="flex flex-row justify-between items-center gap-5">
-            <Link href={"#"} className="text-white rounded-full bg-gray2 p-3">
-              <FaFacebookF size={20} />
-            </Link>
-            <Link href={"#"} className="text-white rounded-full bg-gray2 p-3">
-              <FaLinkedinIn size={20} />
-            </Link>
-            <Link href={"#"} className="text-white rounded-full bg-gray2 p-3">
-              <FaWhatsapp size={20} />
-            </Link>
+
+          <div className="flex gap-5">
+            {socialLinks.map((social, index) => (
+              <Link
+                key={index}
+                href={social.href}
+                className="text-white rounded-full bg-gray2 p-3 hover:bg-gray-600 transition-colors"
+              >
+                {social.icon}
+              </Link>
+            ))}
+
             <button
               onClick={copyCurrentUrl}
-              className="bg-gray2 rounded-full p-3 shadow-none text-white"
+              className="bg-gray2 rounded-full p-3 text-white hover:bg-gray-600 transition-colors"
+              aria-label="Copy link"
             >
               <FaLink size={20} />
             </button>
           </div>
         </div>
-        <div className="lg:w-[60%] flex flex-col justify-between items-center mt-10">
+
+        <div className="lg:w-[60%] flex flex-col items-center mt-10">
           <Image
-            src={
-              (process.env.NEXT_PUBLIC_IMAGE_URL ?? "") +
-                serviceDetails?.image || ""
-            }
-            width={300}
-            height={300}
-            alt="Airport tranfers image"
+            src={`${process.env.NEXT_PUBLIC_IMAGE_URL || ""}${
+              serviceDetails.image
+            }`}
+            width={800}
+            height={450}
+            alt={serviceDetails.title}
             className="w-full lg:h-[300px] h-[400px] object-cover rounded-xl"
+            priority
           />
 
-          <div className="w-full flex flex-col justify-between items-center my-16 gap-5">
+          <div className="w-full my-16 space-y-5">
             <HtmlRerender
-              htmlString={serviceDetails?.description || ""}
+              htmlString={serviceDetails.description}
               className="text-black text-sm whitespace-pre-line"
             />
           </div>
 
-          <div className="lg:block hidden w-full">
+          <div className="hidden lg:block w-full">
             <Discover isInService />
           </div>
         </div>
       </div>
 
       <MoreServices />
-      <div className="lg:hidden block w-full">
+
+      <div className="lg:hidden w-full">
         <Discover />
       </div>
     </div>

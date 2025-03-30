@@ -5,20 +5,31 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export async function generateStaticParams() {
-  const res = await getBlogs();
-  if (!res) return [];
-  return res.map((blog: { id: number }) => ({
-    blogId: blog.id.toString(),
-  }));
+  const locales = ["en", "pt", "es"];
+  const allBlogs = await Promise.all(
+    locales.map((locale) => getBlogs({ locale }))
+  );
+
+  return locales.flatMap(
+    (locale, index) =>
+      allBlogs[index]?.map((blog: { id: number }) => ({
+        locale,
+        blogId: blog.id.toString(),
+      })) || []
+  );
 }
 
 export default async function BlogPage({
   params,
 }: {
-  params: Promise<{ blogId: string }>;
+  params: Promise<{ locale: string; blogId: string }>;
 }) {
-  const { blogId } = await params;
-  if (!blogId) {
+  const { locale, blogId } = await params;
+  const blog = await getBlogs({ locale: locale }).then((blogs) =>
+    blogs?.find((b) => b.id.toString() === blogId)
+  );
+
+  if (!blog) {
     return notFound();
   }
 
