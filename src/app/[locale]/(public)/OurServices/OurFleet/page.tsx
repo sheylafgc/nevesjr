@@ -51,7 +51,7 @@ export default function OurFleet() {
       >
         <div className="w-full lg:h-[500px] h-[400px] bg-gradient-to-l from-transparent to-70% to-gray4 flex flex-col lg:justify-center justify-end items-center">
           <div className="lg:w-[60%] w-[90%] flex flex-col justify-center items-start lg:mb-0 mb-10 gap-3">
-            <h1 className="font-ppMonument text-3xl text-gray whitespace-pre-line1">
+            <h1 className="font-ppMonument text-3xl text-gray1 whitespace-pre-line">
               {pageData?.section1_title}
             </h1>
             <p className="font-light text-gray1 text-sm whitespace-pre-line">
