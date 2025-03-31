@@ -114,7 +114,8 @@
     "payment": "Payment",
     "payment_status": "Payment Status",
     "invoice": "Invoice",
-    "options": "Options",
+    "trip_actions": "Trip Actions",
+    "details": "Details",
     "trip_details": "Trip details",
     "cancel_trip": "Cancel trip",
     "filter_trips": "Filter trips",
@@ -178,6 +179,10 @@
     "error_canceling_trip": "An error occurred while canceling the trip. Please try again later.",
     "your_data_was_sent": "Your data was sent",
     "feedback_submitted": "Your feedback has been submitted"
+  },
+
+  "Common": {
+    "no_location": "No location"
   },
   "Buttons": {
     "see_all": "See all",

@@ -17,6 +17,7 @@ import {
   PriceHeader,
   ToHeader,
 } from "../TableHeaders/TableHeaders";
+import { TranslatedCell } from "../TranslatedCell/TranslatedCell";
 
 export const columns: ColumnDef<BookingProps>[] = [
   {
@@ -52,8 +53,7 @@ export const columns: ColumnDef<BookingProps>[] = [
     header: () => <ToHeader />,
     cell: ({ row }) => {
       const to_route = row.getValue<string>("to_route");
-
-      return <div>{to_route === "" ? "no location" : to_route}</div>;
+      return <TranslatedCell value={to_route} fallbackKey="no_location" />;
     },
   },
   {

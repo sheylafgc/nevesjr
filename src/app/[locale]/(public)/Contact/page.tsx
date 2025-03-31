@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { addContact } from "@/src/domain/Contact/Contact";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { api } from "@/src/api/api";
@@ -26,6 +25,7 @@ import {
   getSocialMedia,
   SocialMediaType,
 } from "@/src/domain/Content/SociaMedia";
+import { Bounce, toast } from "react-toastify";
 
 interface ContactPageDataType {
   id: number;
@@ -45,6 +45,7 @@ interface ContactPageDataType {
 
 export default function Contact() {
   const t = useTranslations("Contact");
+  const tToast = useTranslations("Toasts");
   const locale = useLocale();
   const [pageData, setPageData] = useState<ContactPageDataType | null>(null);
   const [socialMedia, setSocialMedia] = useState<SocialMediaType[] | null>(
@@ -94,8 +95,35 @@ export default function Contact() {
   }, []);
 
   async function onSubmit(data: ContactSchemaType) {
-    await addContact(data, locale);
-    form.reset();
+    try {
+      await api.post("/contact/create", data);
+      toast.success(tToast("feedback_submitted"), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } catch (error) {
+      toast.error(tToast("an_error_occurred"), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      console.log(error);
+    } finally {
+      form.reset();
+    }
   }
 
   return (

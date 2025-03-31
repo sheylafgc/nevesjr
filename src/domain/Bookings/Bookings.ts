@@ -28,6 +28,7 @@ export type BookingProps = {
   payment_intent_id: string;
   payment_status: "approved" | "canceled";
   payment_brand: string;
+  booking_status: "upcoming" | "past" | "canceled";
   booking_date: Date;
   user: number;
   vehicle: number;

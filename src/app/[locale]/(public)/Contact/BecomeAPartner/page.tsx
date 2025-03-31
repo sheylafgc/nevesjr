@@ -15,12 +15,12 @@ import {
   BecomeAPartnerSchema,
   BecomeAPartnerSchemaType,
 } from "./BecomeAPartnerSchema";
-import { addPartner } from "@/src/domain/BePartner/BePartner";
 import { IMaskInput } from "react-imask";
 import { useEffect, useState } from "react";
 import { api } from "@/src/api/api";
 import { useLocale, useTranslations } from "next-intl";
 import SmileyWoman from "@/public/SmileyBusinessWomanCar.svg";
+import { Bounce, toast } from "react-toastify";
 
 interface BePartnerPageDataType {
   section1_banner: string;
@@ -32,6 +32,7 @@ interface BePartnerPageDataType {
 
 export default function Contact() {
   const t = useTranslations("BePartner");
+  const tToast = useTranslations("Toasts");
   const locale = useLocale();
   const [pageData, setPageData] = useState<BePartnerPageDataType | null>(null);
   const form = useForm<BecomeAPartnerSchemaType>({
@@ -57,8 +58,35 @@ export default function Contact() {
   }, []);
 
   async function onSubmit(data: BecomeAPartnerSchemaType) {
-    await addPartner(data, locale);
-    form.reset();
+    try {
+      await api.post("/be-partner/create", data);
+      toast.success(tToast("your_data_was_sent"), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error(tToast("an_error_occurred"), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } finally {
+      form.reset();
+    }
   }
 
   return (
@@ -143,8 +171,12 @@ export default function Contact() {
                         <IMaskInput
                           className="flex h-9 w-full border-b focus:border-black text-base text-white file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm outline-none focus:border-input focus: bg-transparent py-1 shadow-sm"
                           mask="+00 (00) 0000-0000"
-                          placeholder={t("phone_input")}
+                          unmask={true}
                           {...field}
+                          onAccept={(value) => {
+                            field.onChange(value);
+                          }}
+                          placeholder={t("phone_input")}
                         />
                       </FormControl>
                       <FormMessage />

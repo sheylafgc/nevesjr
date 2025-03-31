@@ -114,7 +114,8 @@
     "payment": "Pagamento",
     "payment_status": "Status do Pagamento",
     "invoice": "Fatura",
-    "options": "Opções",
+    "trip_actions": "Ações da Viagem",
+    "details": "Detalhes",
     "trip_details": "Detalhes da viagem",
     "cancel_trip": "Cancelar viagem",
     "filter_trips": "Filtrar viagens",
@@ -178,6 +179,9 @@
     "error_canceling_trip": "Ocorreu um erro ao cancelar a viagem. Por favor, tente novamente mais tarde.",
     "your_data_was_sent": "Seus dados foram enviados",
     "feedback_submitted": "Seu feedback foi enviado"
+  },
+  "Common": {
+    "no_location": "Sem localização"
   },
   "Buttons": {
     "see_all": "Ver tudo",
