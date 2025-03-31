@@ -130,7 +130,7 @@ export default function About() {
         </div>
       </div>
 
-      <div className="w-full bg-gray1 lg:h-screen lg:py-0 py-20 flex flex-col justify-center items-center">
+      {/* <div className="w-full bg-gray1 lg:h-screen lg:py-0 py-20 flex flex-col justify-center items-center">
         <div className="lg:w-[80%] w-[90%] flex flex-col justify-center items-center">
           <div className="flex flex-col items-center justify-between gap-8">
             <h1 className="text-black font-ppMonument text-3xl whitespace-pre-line">
@@ -168,7 +168,7 @@ export default function About() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <Discover
         backgroundImage={pageData?.section6_banner}
