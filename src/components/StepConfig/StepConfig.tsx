@@ -3,7 +3,10 @@
 import { useTranslations } from "next-intl";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoCarOutline } from "react-icons/io5";
-import { MdOutlineLogin, MdOutlinePayment } from "react-icons/md";
+import {
+  MdOutlineLogin,
+  //  MdOutlinePayment
+} from "react-icons/md";
 
 export default function useStepTranslations() {
   const t = useTranslations("Book_a_trip");
@@ -39,15 +42,15 @@ export default function useStepTranslations() {
         />
       ),
     },
-    {
-      id: "Step 4",
-      name: t("checkout"),
-      icon: (active: boolean) => (
-        <MdOutlinePayment
-          className={active ? "text-white" : "text-gray2"}
-          size={20}
-        />
-      ),
-    },
+    // {
+    //   id: "Step 4",
+    //   name: t("checkout"),
+    //   icon: (active: boolean) => (
+    //     <MdOutlinePayment
+    //       className={active ? "text-white" : "text-gray2"}
+    //       size={20}
+    //     />
+    //   ),
+    // },
   ];
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const BookATripSchema = z.object({
+  user: z.number().nullable(),
   from_route: z.string().min(1, "Very short from").max(60, "Very long from"),
   to_route: z.string().optional(),
   date: z.string().min(1, "Very short date"),

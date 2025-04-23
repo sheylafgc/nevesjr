@@ -10,6 +10,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/src/i18n/navigation";
 
 interface FooterProps {
   isLogged?: boolean;
@@ -17,6 +18,7 @@ interface FooterProps {
 
 export default function Footer({ isLogged }: FooterProps) {
   const t = useTranslations("Footer");
+  const router = useRouter();
 
   return (
     <footer
@@ -57,8 +59,8 @@ export default function Footer({ isLogged }: FooterProps) {
                 <NavLink isFooter href="/" title={t("nav1")} />
                 <NavLink isFooter href="/OurServices" title={t("nav2")} />
                 <NavLink isFooter href="/About" title={t("nav3")} />
-                <NavLink isFooter href="/Contact" title={t("nav4")} />
-                <NavLink isFooter href="/Blog" title={t("nav5")} />
+                <NavLink isFooter href="/Blog" title={t("nav4")} />
+                <NavLink isFooter href="/Contact" title={t("nav5")} />
                 <NavLink isFooter href="/auth/Login" title={t("nav6")} />
               </div>
             </div>
@@ -128,9 +130,12 @@ export default function Footer({ isLogged }: FooterProps) {
             </div>
 
             <div className="hidden lg:flex flex-row lg:order-last">
-              <span className="underline font-light text-gray1">
+              <button
+                onClick={() => router.push("/privacy-policy")}
+                className="underline font-light text-gray1"
+              >
                 {t("privacy_policy")}
-              </span>
+              </button>
             </div>
           </div>
         </div>

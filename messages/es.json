@@ -180,6 +180,9 @@
     "your_data_was_sent": "Tus datos fueron enviados",
     "feedback_submitted": "Tu comentario ha sido enviado"
   },
+  "privacy-policy": {
+    "title": "Política de Privacidad"
+  },
   "Common": {
     "no_location": "Sin ubicación"
   },

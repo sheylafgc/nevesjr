@@ -12,7 +12,7 @@ import {
   MdLocationSearching,
   MdLuggage,
   MdOutlineLogin,
-  MdOutlinePayment,
+  // MdOutlinePayment,
   MdPeopleAlt,
   MdWatch,
 } from "react-icons/md";
@@ -49,15 +49,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getVehicles } from "@/src/domain/Vehicles/Vehicles";
 import Loading from "@/components/Loading/Loading";
 
-import { loadStripe } from "@stripe/stripe-js";
-import {
-  CardCvcElement,
-  CardExpiryElement,
-  CardNumberElement,
-  Elements,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
+// import
+// CardCvcElement,
+// CardExpiryElement,
+// CardNumberElement,
+// Elements,
+// useElements,
+// useStripe,
+// "@stripe/react-stripe-js";
 import InputText from "@/components/InputText/InputText";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -85,11 +85,11 @@ import { useLocale, useTranslations } from "next-intl";
 import useStepTranslations from "@/src/components/StepConfig/StepConfig";
 import { useRouter } from "@/src/i18n/navigation";
 
-if (process.env.NEXT_PUBLIC_STRIPE_PUB_KEY === undefined) {
-  throw new Error("NEXT_PUBLIC_STRIPE_PUB_KEY is not defined");
-}
+// if (process.env.NEXT_PUBLIC_STRIPE_PUB_KEY === undefined) {
+//   throw new Error("NEXT_PUBLIC_STRIPE_PUB_KEY is not defined");
+// }
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUB_KEY);
+// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUB_KEY);
 
 function BookATripComponent() {
   const t = useTranslations("Book_a_trip");
@@ -105,6 +105,7 @@ function BookATripComponent() {
   const form = useForm<BookATripSchemaType>({
     resolver: zodResolver(BookATripSchema),
     defaultValues: {
+      user: null,
       from_route: "",
       to_route: "",
       date: "",
@@ -140,8 +141,8 @@ function BookATripComponent() {
   const fromRef = useRef(null);
   const toRef = useRef(null);
 
-  const stripe = useStripe();
-  const elements = useElements();
+  // const stripe = useStripe();
+  // const elements = useElements();
   const router = useRouter();
 
   const [libraries] = useState<Libraries>(["places"]);
@@ -273,12 +274,19 @@ function BookATripComponent() {
   }, [formValues.from_route, formValues.to_route, formValues.hour]);
 
   useEffect(() => {
-    form.setValue("first_name", user?.first_name || "");
-    form.setValue("last_name", user?.last_name || "");
-    form.setValue("email", user?.email || "");
-    form.setValue("phone_number", user?.phone || "");
-    form.setValue("title", user?.title || "Mr");
-  }, [user]);
+    if (user) {
+      form.setValue("first_name", user?.first_name || "");
+      form.setValue("last_name", user?.last_name || "");
+      form.setValue("email", user?.email || "");
+      form.setValue("phone_number", user?.phone || "");
+      form.setValue("title", user?.title || "Mr");
+      form.setValue("user", Number(user?.id) || null);
+
+      if (currentStep === 1) {
+        next();
+      }
+    }
+  }, [user, form]);
 
   const handleDurationChange = (duration: string) => {
     form.setValue("duration", duration);
@@ -293,121 +301,124 @@ function BookATripComponent() {
     setLoading(true);
 
     try {
-      if (!stripe || !elements) {
-        console.log("Stripe or elements not loaded.");
-        toast.error(tToast("error_loading_stripe"), {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+      // if (!stripe || !elements) {
+      //   console.log("Stripe or elements not loaded.");
+      //   toast.error(tToast("error_loading_stripe"), {
+      //     position: "top-right",
+      //     autoClose: 3000,
+      //     hideProgressBar: false,
+      //     closeOnClick: false,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     transition: Bounce,
+      //   });
+      //   return;
+      // }
+
+      // const cardNumberElement = elements.getElement(CardNumberElement);
+      // const cardExpiryElement = elements.getElement(CardExpiryElement);
+      // const cardCvcElement = elements.getElement(CardCvcElement);
+
+      // if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+      //   console.log("Card elements not found.");
+      //   toast.error(tToast("error_loading_credit_card"), {
+      //     position: "top-right",
+      //     autoClose: 3000,
+      //     hideProgressBar: false,
+      //     closeOnClick: false,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     transition: Bounce,
+      //   });
+      //   return;
+      // }
+
+      // const { error, paymentMethod } = await stripe.createPaymentMethod({
+      //   type: "card",
+      //   card: cardNumberElement,
+      // });
+
+      // if (error) {
+      //   console.log("Error creating payment method:", error);
+      //   toast.error(`${tToast("error_processing_payment")} ${error.message}`, {
+      //     position: "top-right",
+      //     autoClose: 3000,
+      //     hideProgressBar: false,
+      //     closeOnClick: false,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     transition: Bounce,
+      //   });
+      //   return;
+      // }
+      if (!data.user) {
+        toast.error("User ID is missing");
         return;
       }
-
-      const cardNumberElement = elements.getElement(CardNumberElement);
-      const cardExpiryElement = elements.getElement(CardExpiryElement);
-      const cardCvcElement = elements.getElement(CardCvcElement);
-
-      if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
-        console.log("Card elements not found.");
-        toast.error(tToast("error_loading_credit_card"), {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        return;
-      }
-
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardNumberElement,
-      });
-
-      if (error) {
-        console.log("Error creating payment method:", error);
-        toast.error(`${tToast("error_processing_payment")} ${error.message}`, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        return;
-      }
-
-      const response = await api.post("/booking/create/", data, {
+      await api.post("/booking/create/", data, {
         headers: {
           "Content-Type": "application/json",
         },
       });
+      setPaymentSuccessful(true);
 
-      if (response.data && response.data.client_secret) {
-        const { error, paymentIntent } = await stripe.confirmCardPayment(
-          response.data.client_secret,
-          {
-            payment_method: paymentMethod.id,
-          }
-        );
-
-        if (error) {
-          console.log("Error confirming payment:", error);
-          toast.error(
-            `${tToast("error_confirming_payment")} ${error.message}`,
-            {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            }
-          );
-        } else if (paymentIntent.status === "succeeded") {
-          setPaymentSuccessful(true);
-          toast.success(tToast("payment_successful"), {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
-        }
-      } else {
-        console.log("Unexpected response:", response.data);
-        toast.error(tToast("unexpected_error_processing_payment"), {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-      }
+      // if (response.data && response.data.client_secret) {
+      //   const { error, paymentIntent } = await stripe.confirmCardPayment(
+      //     response.data.client_secret,
+      //     {
+      //       payment_method: paymentMethod.id,
+      //     }
+      //   );
+      //   if (error) {
+      //     console.log("Error confirming payment:", error);
+      //     toast.error(
+      //       `${tToast("error_confirming_payment")} ${error.message}`,
+      //       {
+      //         position: "top-right",
+      //         autoClose: 3000,
+      //         hideProgressBar: false,
+      //         closeOnClick: false,
+      //         pauseOnHover: true,
+      //         draggable: true,
+      //         progress: undefined,
+      //         theme: "light",
+      //         transition: Bounce,
+      //       }
+      //     );
+      //   } else if (paymentIntent.status === "succeeded") {
+      //     setPaymentSuccessful(true);
+      //     toast.success(tToast("payment_successful"), {
+      //       position: "top-right",
+      //       autoClose: 3000,
+      //       hideProgressBar: false,
+      //       closeOnClick: false,
+      //       pauseOnHover: true,
+      //       draggable: true,
+      //       progress: undefined,
+      //       theme: "light",
+      //       transition: Bounce,
+      //     });
+      //   }
+      // } else {
+      //   console.log("Unexpected response:", response.data);
+      //   toast.error(tToast("unexpected_error_processing_payment"), {
+      //     position: "top-right",
+      //     autoClose: 3000,
+      //     hideProgressBar: false,
+      //     closeOnClick: false,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     transition: Bounce,
+      //   });
+      // }
     } catch (error) {
       console.log("Error fetching clientSecret:", error);
       toast.error(tToast("error_processing_request"), {
@@ -475,37 +486,39 @@ function BookATripComponent() {
       return true;
     }
 
-    if (currentStep === 3) {
-      return true;
-    }
+    // if (currentStep === 3) {
+    //   return true;
+    // }
 
     return false;
   };
 
-  const calculateTripAmount = () => {
-    const { vehicle, distance_km, duration } = formValues;
+  // const calculateTripAmount = () => {
+  //   const { vehicle, distance_km, duration } = formValues;
 
-    if (!vehicle) return 0;
+  //   if (!vehicle) return 0;
 
-    const selectedVehicle = vehicles?.find((v) => v.id === vehicle);
-    if (!selectedVehicle) return 0;
+  //   const selectedVehicle = vehicles?.find((v) => v.id === vehicle);
+  //   if (!selectedVehicle) return 0;
 
-    let amount = 0;
+  //   let amount = 0;
 
-    if (checked && selectedVehicle.price_hour && duration) {
-      const [hours, minutes, seconds] = duration.split(":").map(Number);
-      const totalHours = hours + minutes / 60 + seconds / 3600;
-      amount = Number(selectedVehicle.price_hour) * totalHours * 100;
-    } else if (!checked && selectedVehicle.price_km && distance_km) {
-      amount = Number(selectedVehicle.price_km) * distance_km * 100;
-    }
+  //   if (checked && selectedVehicle.price_hour && duration) {
+  //     const [hours, minutes, seconds] = duration.split(":").map(Number);
+  //     const totalHours = hours + minutes / 60 + seconds / 3600;
+  //     amount = Number(selectedVehicle.price_hour) * totalHours * 100;
+  //   } else if (!checked && selectedVehicle.price_km && distance_km) {
+  //     amount = Number(selectedVehicle.price_km) * distance_km * 100;
+  //   }
 
-    return Math.floor(amount);
-  };
+  //   return Math.floor(amount);
+  // };
 
   const next = () => {
     setPreviousStep(currentStep);
     console.log("currentStep", currentStep);
+    window.scrollTo(0, 10);
+    console.log(formValues);
     if (!isLastStep) {
       setCurrentStep((cur) => cur + 1);
     }
@@ -516,14 +529,9 @@ function BookATripComponent() {
       setPreviousStep(currentStep);
       setCurrentStep((step) => step - 1);
       console.log(formValues);
+      window.scrollTo(0, 10);
     }
   };
-
-  useEffect(() => {
-    if (currentStep === 1 && user) {
-      next();
-    }
-  }, [currentStep, user, next]);
 
   if (!isLoaded) {
     return <Loading />;
@@ -573,9 +581,10 @@ function BookATripComponent() {
                         <MdOutlineLogin className="text-white" size={20} />
                       ) : step.id === "Step 3" ? (
                         <FiCheckCircle className="text-white" size={20} />
-                      ) : step.id === "Step 4" ? (
-                        <MdOutlinePayment className="text-white" size={20} />
-                      ) : null}
+                      ) : // : step.id === "Step 4" ? (
+                      //   <MdOutlinePayment className="text-white" size={20} />
+                      // )
+                      null}
                       <div className="absolute -bottom-[2rem] w-max text-center">
                         <span className="text-xs text-gray2 font-bold">
                           {step.name}
@@ -590,9 +599,10 @@ function BookATripComponent() {
                         <MdOutlineLogin className="text-white" size={20} />
                       ) : step.id === "Step 3" ? (
                         <FiCheckCircle className="text-white" size={20} />
-                      ) : step.id === "Step 4" ? (
-                        <MdOutlinePayment className="text-white" size={20} />
-                      ) : null}
+                      ) : //  : step.id === "Step 4" ? (
+                      //   <MdOutlinePayment className="text-white" size={20} />
+                      // )
+                      null}
                       <div className="absolute -bottom-[2rem] w-max text-center">
                         <span className="text-xs text-gray2 font-bold">
                           {step.name}
@@ -607,9 +617,10 @@ function BookATripComponent() {
                         <MdOutlineLogin className="text-gray2" size={20} />
                       ) : step.id === "Step 3" ? (
                         <FiCheckCircle className="text-gray2" size={20} />
-                      ) : step.id === "Step 4" ? (
-                        <MdOutlinePayment className="text-gray2" size={20} />
-                      ) : null}
+                      ) : // : step.id === "Step 4" ? (
+                      //   <MdOutlinePayment className="text-gray2" size={20} />
+                      // )
+                      null}
                       <div className="absolute -bottom-[2rem] w-max text-center">
                         <span className="text-xs text-gray2 font-medium">
                           {step.name}
@@ -676,9 +687,9 @@ function BookATripComponent() {
                                 <FormField
                                   control={form.control}
                                   name="from_route"
-                                  render={() => (
+                                  render={({ field }) => (
                                     <FormItem className="w-full">
-                                      <FormControl>
+                                      <FormControl {...field}>
                                         <InputText
                                           ref={fromRef}
                                           placeholder={t("from_input")}
@@ -787,6 +798,7 @@ function BookATripComponent() {
                                         className="w-full"
                                       >
                                         <Button
+                                          type="button"
                                           className={cn(
                                             "justify-start text-left text-black font-normal bg-white shadow-sm hover:bg-white",
                                             !formValues.date &&
@@ -900,7 +912,7 @@ function BookATripComponent() {
                                             {car.quantity_luggage}
                                           </span>
                                         </div>
-                                        <span className="text-gray2 font-extrabold">
+                                        {/* <span className="text-gray2 font-extrabold">
                                           £
                                           {checked
                                             ? car.price_hour
@@ -908,8 +920,11 @@ function BookATripComponent() {
                                           <span className="text-xs text-black/50">
                                             {checked ? "per hour" : "per km"}
                                           </span>
-                                        </span>
-                                        <Button className="px-8 border border-gray2 text-sm font-thin rounded-full hover:text-gray1 lg:mt-0 mt-8">
+                                        </span> */}
+                                        <Button
+                                          type="button"
+                                          className="px-8 border border-gray2 text-sm font-thin rounded-full hover:text-gray1 lg:mt-0 mt-8"
+                                        >
                                           {tButton("select")}
                                         </Button>
                                       </div>
@@ -947,7 +962,7 @@ function BookATripComponent() {
                                             {car.quantity_luggage}
                                           </span>
                                         </div>
-                                        <span className="text-gray2 font-extrabold">
+                                        {/* <span className="text-gray2 font-extrabold">
                                           £
                                           {checked
                                             ? car.price_hour
@@ -955,8 +970,11 @@ function BookATripComponent() {
                                           <span className="text-xs text-black/50">
                                             {checked ? "per hour" : "per km"}
                                           </span>
-                                        </span>
-                                        <Button className="px-8 border border-gray2 rounded-full text-sm font-thin hover:text-gray1 lg:mt-0 mt-8">
+                                        </span> */}
+                                        <Button
+                                          type="button"
+                                          className="px-8 border border-gray2 rounded-full text-sm font-thin hover:text-gray1 lg:mt-0 mt-8"
+                                        >
                                           {tButton("select")}
                                         </Button>
                                       </div>
@@ -1242,7 +1260,7 @@ function BookATripComponent() {
                             (GMT) - {distance}
                           </span>
                         )}
-                      <div className="flex flex-row justify-between items-center gap-1">
+                      {/* <div className="flex flex-row justify-between items-center gap-1">
                         <span className="text-sm text-gray2">
                           {t("trip_cost")}
                         </span>
@@ -1252,7 +1270,7 @@ function BookATripComponent() {
                             currency: "GBP",
                           }).format(calculateTripAmount() / 100)}
                         </span>
-                      </div>
+                      </div> */}
                       <Separator />
                       <span className="font-bold text-gray2 text-sm">
                         {`${userValues.title ? userValues.title : ""}. ${
@@ -1327,7 +1345,7 @@ function BookATripComponent() {
                   </motion.div>
                 )}
 
-                {currentStep === 3 && (
+                {/* {currentStep === 3 && (
                   <motion.div
                     initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
@@ -1472,7 +1490,7 @@ function BookATripComponent() {
                       </div>
                     </div>
                   </motion.div>
-                )}
+                )} */}
               </div>
               {/* Navigation */}
               <div
@@ -1495,38 +1513,50 @@ function BookATripComponent() {
                   >
                     <FaArrowLeft size={20} />
                   </button>
-                  {currentStep === 3 ? (
-                    <button
-                      type="submit"
-                      disabled={
-                        !areFieldsFilled() || !stripe || !elements || loading
-                      }
-                      className={`rounded-full bg-white p-3 font-semibold text-sm shadow-sm ring-1 ring-inset ring-black hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50`}
-                    >
-                      {t("complete_reservation")}
-                    </button>
-                  ) : currentStep === 2 ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        next();
-                      }}
-                      className={`rounded-full bg-black py-3 px-4  text-white
+                  {
+                    // currentStep === 3 ? (
+                    //   <button
+                    //     type="submit"
+                    //     disabled={
+                    //       !areFieldsFilled() ||
+                    //        || !stripe
+                    //         || !elements
+                    //       loading
+                    //     }
+                    //     className={`rounded-full bg-white p-3 font-semibold text-sm shadow-sm ring-1 ring-inset ring-black hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50`}
+                    //   >
+                    //     {t("complete_reservation")}
+                    //   </button>
+                    // ) :
+                    currentStep === 2 ? (
+                      <button
+                        // type="button"
+                        // onClick={(e) => {
+                        //   e.preventDefault();
+                        //   next();
+                        // }}
+                        type="submit"
+                        onClick={() => console.log(formValues)}
+                        disabled={!areFieldsFilled() || loading}
+                        className={`rounded-full bg-black py-3 px-4  text-white
                        text-sm shadow-sm ring-1 ring-inset ring-black hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50`}
-                    >
-                      {t("proceed_to_checkout")}
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={next}
-                      disabled={!areFieldsFilled()}
-                      className={`rounded-full bg-white p-3 font-semibold text-sm shadow-sm ring-1 ring-inset ring-black hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50`}
-                    >
-                      <FaArrowRight size={20} />
-                    </button>
-                  )}
+                      >
+                        {t("complete_reservation")}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          next();
+                        }}
+                        disabled={!areFieldsFilled()}
+                        className={`rounded-full bg-white p-3 font-semibold text-sm shadow-sm ring-1 ring-inset ring-black hover:opacity-50 disabled:cursor-not-allowed disabled:opacity-50`}
+                      >
+                        <FaArrowRight size={20} />
+                      </button>
+                    )
+                  }
                 </div>
               </div>
             </form>
@@ -1549,9 +1579,9 @@ function BookATripComponent() {
 export default function BookATrip() {
   return (
     <Suspense fallback={<Loading />}>
-      <Elements stripe={stripePromise}>
-        <BookATripComponent />
-      </Elements>
+      {/* <Elements stripe={stripePromise}> */}
+      <BookATripComponent />
+      {/* </Elements> */}
     </Suspense>
   );
 }

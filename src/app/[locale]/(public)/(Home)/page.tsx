@@ -373,6 +373,9 @@ function HomeComponent() {
               <CarouselItem
                 key={service.id}
                 className="flex items-center justify-center mb-6 lg:basis-1/2 lg:ml-8 lg:mt-8"
+                onClick={() =>
+                  router.push(`/OurServices/ServicePage/${service.id}`)
+                }
               >
                 <div
                   style={{

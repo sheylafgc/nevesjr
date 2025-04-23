@@ -130,7 +130,7 @@ export default function SignUpPage() {
                           onAccept={(value) => {
                             field.onChange(value);
                           }}
-                          placeholder={t("phone_input")}
+                          placeholder={t("phone_number")}
                         />
                       </FormControl>
                       <FormMessage />

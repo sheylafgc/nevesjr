@@ -34,6 +34,7 @@ type AuthContextData = {
   bookings: BookingProps[] | null;
   getUserBookings: () => Promise<void>;
   signIn: (data: LoginSchemaType, isOnBookATrip?: boolean) => Promise<void>;
+  signInForBook: (data: LoginSchemaType) => Promise<void>;
   signUp: (data: SignUpProps) => Promise<void>;
   signOut: () => void;
   loading: boolean;
@@ -81,6 +82,59 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else {
         router.push("/Internal");
       }
+    } catch (error) {
+      let errorMessage = tToast("an_error_occurred");
+
+      if (
+        error instanceof Error &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response
+      ) {
+        errorMessage =
+          (error.response as { data: { detail?: string } }).data.detail ||
+          errorMessage;
+      } else {
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function signInForBook(form: LoginSchemaType) {
+    setLoading(true);
+    try {
+      const { data } = await api.post("/login/", form);
+      api.defaults.headers.Authorization = `Bearer ${data.access}`;
+      Cookies.set("NEVESJR_TOKEN", data.access, { expires: 1 });
+      toast.success(tToast("login_successful"), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setRefresh(!refresh);
     } catch (error) {
       let errorMessage = tToast("an_error_occurred");
 
@@ -201,6 +255,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         bookings,
         getUserBookings,
         signIn,
+        signInForBook,
         signUp,
         signOut,
         loading,

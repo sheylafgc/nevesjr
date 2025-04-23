@@ -18,17 +18,30 @@ interface TimePickerProps {
 }
 
 const TimePicker = ({ onChange }: TimePickerProps) => {
-  const [hours, setHours] = useState("12");
-  const [minutes, setMinutes] = useState("00");
+  const [hours, setHours] = useState<string>("");
+  const [minutes, setMinutes] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
-  const [period, setPeriod] = useState<"AM" | "PM">("AM");
-  const time = `${hours}:${minutes} ${period}`;
+  const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
+
+  const time = `${
+    hours === "" && minutes === "" && !period
+      ? ""
+      : hours + ":" + minutes + " " + period
+  }`;
 
   function formattedTime(hour: string, period: string) {
-    if (period === "PM") {
-      return `${parseInt(hour) + 12}:${minutes}:00`;
+    let hourNum = parseInt(hour || "0");
+
+    if (period === "PM" && hourNum < 12) {
+      hourNum += 12;
+    } else if (period === "AM" && hourNum === 12) {
+      hourNum = 0;
     }
-    return `${hour}:${minutes}:00`;
+
+    const formattedHour = hourNum.toString().padStart(2, "0");
+    const formattedMinutes = minutes.padStart(2, "0");
+
+    return `${formattedHour}:${formattedMinutes}:00`;
   }
 
   const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +69,7 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
   };
 
   const handleConfirm = () => {
-    const timeFormatted = formattedTime(hours, period);
+    const timeFormatted = formattedTime(hours, period ?? "AM");
     onChange(timeFormatted);
     setIsOpen(false);
   };
@@ -97,7 +110,7 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
                 maxLength={2}
               />
               <Select
-                value={period}
+                value={period ?? ""}
                 onValueChange={(value) => setPeriod(value as "AM" | "PM")}
               >
                 <SelectTrigger>
@@ -109,7 +122,11 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleConfirm} className="mt-4">
+            <Button
+              disabled={!hours || !minutes || !period}
+              onClick={handleConfirm}
+              className="mt-4"
+            >
               Confirm
             </Button>
           </div>

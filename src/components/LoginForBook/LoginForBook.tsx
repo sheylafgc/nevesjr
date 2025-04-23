@@ -20,7 +20,7 @@ import { AuthContext } from "@/src/context/AuthContext/AuthContext";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 
 export default function LoginForBook() {
-  const { user, signIn } = useContext(AuthContext);
+  const { user, signInForBook } = useContext(AuthContext);
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -31,7 +31,7 @@ export default function LoginForBook() {
   });
 
   async function onSubmit(data: LoginSchemaType) {
-    await signIn(data, true);
+    await signInForBook(data);
     console.log(data);
   }
   return (
