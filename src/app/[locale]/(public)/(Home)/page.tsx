@@ -118,7 +118,7 @@ function HomeComponent() {
   const locale = useLocale();
   const [checked, setChecked] = useState(false);
   const [date, setDate] = useState<Date>();
-  const [selectedTime, setSelectedTime] = useState<string>("12:00:00");
+  const [selectedTime, setSelectedTime] = useState<string>("");
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
   const [selectedDuration, setSelectedDuration] = useState<

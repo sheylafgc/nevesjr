@@ -286,7 +286,7 @@ function BookATripComponent() {
         next();
       }
     }
-  }, [user, form]);
+  }, [user, form, currentStep]);
 
   const handleDurationChange = (duration: string) => {
     form.setValue("duration", duration);
@@ -457,7 +457,7 @@ function BookATripComponent() {
       formValues.to_route !== "" &&
       formValues.date !== "" &&
       formValues.hour !== "" &&
-      formValues.estimated_time !== "";
+      formValues.estimated_time !== undefined;
     const isOtherFiledFilled =
       formValues.first_name !== "" &&
       formValues.last_name !== "" &&
@@ -1548,6 +1548,7 @@ function BookATripComponent() {
                         type="button"
                         onClick={(e) => {
                           e.preventDefault();
+                          console.log(formValues);
                           next();
                         }}
                         disabled={!areFieldsFilled()}
