@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputText from "../InputText/InputText";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { MdWatch } from "react-icons/md";
@@ -23,6 +24,11 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
 
+  useEffect(() => {
+    const timeFormatted = formattedTime(hours, period ?? "AM");
+    onChange(timeFormatted);
+  }, [hours, minutes, period, onChange]);
+
   const time = `${
     hours === "" && minutes === "" && !period
       ? ""
@@ -30,6 +36,8 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
   }`;
 
   function formattedTime(hour: string, period: string) {
+    if (!hour || !minutes || !period) return "";
+
     let hourNum = parseInt(hour || "0");
 
     if (period === "PM" && hourNum < 12) {
@@ -45,32 +53,39 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
   }
 
   const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const numericValue = Number(value);
+    const value = e.target.value.replace(/\D/g, "");
+    const numericValue = parseInt(value || "0");
 
-    if (
-      /^\d{0,2}$/.test(value) &&
-      (value === "" || (numericValue >= 1 && numericValue <= 12))
-    ) {
-      setHours(value);
+    if (value === "" || (numericValue >= 1 && numericValue <= 12)) {
+      setHours(value.slice(0, 2));
     }
   };
 
   const handleMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const numericValue = Number(value);
+    const value = e.target.value.replace(/\D/g, "");
+    const numericValue = parseInt(value || "0");
 
-    if (
-      /^\d{0,2}$/.test(value) &&
-      (value === "" || (numericValue >= 0 && numericValue <= 59))
-    ) {
-      setMinutes(value);
+    if (value === "" || (numericValue >= 0 && numericValue <= 59)) {
+      setMinutes(value.slice(0, 2));
+    }
+  };
+
+  const handleBlur = (type: "hours" | "minutes") => {
+    if (type === "hours" && hours) {
+      const num = parseInt(hours);
+      if (num < 1) setHours("1");
+      if (num > 12) setHours("12");
+      setHours(hours.padStart(2, "0"));
+    }
+    if (type === "minutes" && minutes) {
+      const num = parseInt(minutes);
+      if (num < 0) setMinutes("00");
+      if (num > 59) setMinutes("59");
+      setMinutes(minutes.padStart(2, "0"));
     }
   };
 
   const handleConfirm = () => {
-    const timeFormatted = formattedTime(hours, period ?? "AM");
-    onChange(timeFormatted);
     setIsOpen(false);
   };
 
@@ -90,22 +105,24 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
           <div className="flex flex-col p-4">
             <div className="flex">
               <Input
-                type="number"
-                min="0"
-                max="12"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="HH"
                 className="w-16 mx-1"
-                onInput={handleHourChange}
+                onChange={handleHourChange}
+                onBlur={() => handleBlur("hours")}
                 value={hours}
                 maxLength={2}
               />
               <Input
-                type="number"
-                min="0"
-                max="59"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="MM"
                 className="w-16 mx-1"
-                onInput={handleMinuteChange}
+                onChange={handleMinuteChange}
+                onBlur={() => handleBlur("minutes")}
                 value={minutes}
                 maxLength={2}
               />
