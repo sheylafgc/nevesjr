@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InputText from "../InputText/InputText";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { MdWatch } from "react-icons/md";
@@ -24,18 +23,13 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
 
-  useEffect(() => {
-    const timeFormatted = formattedTime(hours, period ?? "AM");
-    onChange(timeFormatted);
-  }, [hours, minutes, period, onChange]);
-
   const time = `${
-    hours === "" && minutes === "" && !period
+    hours === "" || minutes === "" || !period
       ? ""
       : hours + ":" + minutes + " " + period
   }`;
 
-  function formattedTime(hour: string, period: string) {
+  function formattedTime(hour: string, minutes: string, period: string) {
     if (!hour || !minutes || !period) return "";
 
     let hourNum = parseInt(hour || "0");
@@ -51,15 +45,6 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
 
     return `${formattedHour}:${formattedMinutes}:00`;
   }
-
-  const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "");
-    const numericValue = parseInt(value || "0");
-
-    if (value === "" || (numericValue >= 1 && numericValue <= 12)) {
-      setHours(value.slice(0, 2));
-    }
-  };
 
   const handleMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -85,7 +70,13 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
     }
   };
 
+  const hourOptions = Array.from({ length: 12 }, (_, i) => i + 1);
+
   const handleConfirm = () => {
+    if (hours && minutes && period) {
+      const formatted = formattedTime(hours, minutes, period);
+      onChange(formatted);
+    }
     setIsOpen(false);
   };
 
@@ -103,29 +94,34 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
         </PopoverTrigger>
         <PopoverContent>
           <div className="flex flex-col p-4">
-            <div className="flex">
-              <Input
-                type="tel"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                placeholder="HH"
-                className="w-16 mx-1"
-                onChange={handleHourChange}
-                onBlur={() => handleBlur("hours")}
-                value={hours}
-                maxLength={2}
-              />
+            <div className="flex items-center gap-2">
+              <Select value={hours} onValueChange={(value) => setHours(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="HH" />
+                </SelectTrigger>
+                <SelectContent>
+                  {hourOptions.map((hour) => (
+                    <SelectItem
+                      key={hour}
+                      value={hour.toString().padStart(2, "0")}
+                    >
+                      {hour.toString().padStart(2, "0")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Input
                 type="tel"
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder="MM"
-                className="w-16 mx-1"
                 onChange={handleMinuteChange}
                 onBlur={() => handleBlur("minutes")}
                 value={minutes}
+                style={{ borderWidth: "1px" }}
                 maxLength={2}
               />
+
               <Select
                 value={period ?? ""}
                 onValueChange={(value) => setPeriod(value as "AM" | "PM")}
@@ -144,7 +140,7 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
               onClick={handleConfirm}
               className="mt-4"
             >
-              Confirm
+              Confirmar
             </Button>
           </div>
         </PopoverContent>

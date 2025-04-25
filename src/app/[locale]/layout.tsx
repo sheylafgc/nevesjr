@@ -16,6 +16,7 @@ import {
 import { Locale, routing } from "@/src/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
+import "react-international-phone/style.css";
 
 export const metadata: Metadata = {
   title: "Neves Jr",

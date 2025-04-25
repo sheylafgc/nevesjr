@@ -22,8 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PasswordInput } from "@/components/PasswordInput/PasswordInput";
-import { IMaskInput } from "react-imask";
 import { useLocale, useTranslations } from "next-intl";
+import { PhoneInput } from "react-international-phone";
 
 export default function SignUpPage() {
   const t = useTranslations("LoginAndSignUp");
@@ -122,15 +122,12 @@ export default function SignUpPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl {...field}>
-                        <IMaskInput
-                          className="flex h-9 w-full bg-white focus:border-black text-base file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm outline-none rounded-md focus:border focus:border-input bg-transparent px-3 py-1 shadow-sm"
-                          mask="+00 (00) 0000-0000"
-                          unmask={true}
-                          {...field}
-                          onAccept={(value) => {
-                            field.onChange(value);
+                        <PhoneInput
+                          defaultCountry="gb"
+                          inputStyle={{
+                            width: "100%",
                           }}
-                          placeholder={t("phone_number")}
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />

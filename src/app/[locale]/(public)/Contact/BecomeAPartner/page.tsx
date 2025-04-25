@@ -15,12 +15,12 @@ import {
   BecomeAPartnerSchema,
   BecomeAPartnerSchemaType,
 } from "./BecomeAPartnerSchema";
-import { IMaskInput } from "react-imask";
 import { useEffect, useState } from "react";
 import { api } from "@/src/api/api";
 import { useLocale, useTranslations } from "next-intl";
 import SmileyWoman from "@/public/SmileyBusinessWomanCar.svg";
 import { Bounce, toast } from "react-toastify";
+import { PhoneInput } from "react-international-phone";
 
 interface BePartnerPageDataType {
   section1_banner: string;
@@ -168,14 +168,26 @@ export default function Contact() {
                   render={({ field }) => (
                     <FormItem className="w-full lg:w-1/2 lg:ml-2">
                       <FormControl>
-                        <IMaskInput
-                          className="flex h-9 w-full border-b focus:border-black text-base text-white file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm outline-none focus:border-input focus: bg-transparent py-1 shadow-sm"
-                          mask="+00 (00) 0000-0000"
-                          unmask={true}
-                          {...field}
-                          onAccept={(value) => {
-                            field.onChange(value);
+                        <PhoneInput
+                          defaultCountry="gb"
+                          inputStyle={{
+                            width: "100%",
+                            backgroundColor: "transparent",
+                            border: "none",
+                            borderBottom: "1px solid white",
+                            borderRadius: "0",
+                            color: "white",
                           }}
+                          countrySelectorStyleProps={{
+                            buttonStyle: {
+                              backgroundColor: "transparent",
+                              border: "none",
+                              borderBottom: "1px solid white",
+                              borderRadius: "0",
+                              color: "white",
+                            },
+                          }}
+                          {...field}
                           placeholder={t("phone_input")}
                         />
                       </FormControl>

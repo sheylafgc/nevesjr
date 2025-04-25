@@ -72,7 +72,6 @@ import { useSearchParams } from "next/navigation";
 import DurationPicker from "@/components/DurationPicker/DurationPicker";
 import TimePicker from "@/components/TimePicker/TimePicker";
 import { TbClockPin } from "react-icons/tb";
-import { IMaskInput } from "react-imask";
 import {
   Autocomplete,
   Libraries,
@@ -84,6 +83,7 @@ import { Bounce, toast } from "react-toastify";
 import { useLocale, useTranslations } from "next-intl";
 import useStepTranslations from "@/src/components/StepConfig/StepConfig";
 import { useRouter } from "@/src/i18n/navigation";
+import { PhoneInput } from "react-international-phone";
 
 // if (process.env.NEXT_PUBLIC_STRIPE_PUB_KEY === undefined) {
 //   throw new Error("NEXT_PUBLIC_STRIPE_PUB_KEY is not defined");
@@ -286,7 +286,7 @@ function BookATripComponent() {
         next();
       }
     }
-  }, [user, form, currentStep]);
+  }, [user, currentStep]);
 
   const handleDurationChange = (duration: string) => {
     form.setValue("duration", duration);
@@ -1162,15 +1162,15 @@ function BookATripComponent() {
                               render={({ field }) => (
                                 <FormItem className="lg:w-[45%] w-full">
                                   <FormControl {...field}>
-                                    <IMaskInput
-                                      className="flex h-9 w-full bg-white focus:border-black text-base file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm outline-none rounded-md focus:border focus:border-input bg-transparent px-3 py-1 shadow-sm"
-                                      mask="+00 (00) 0000-0000"
-                                      unmask={true}
-                                      {...field}
-                                      onAccept={(value) => {
-                                        field.onChange(value);
+                                    <PhoneInput
+                                      defaultCountry="gb"
+                                      inputStyle={{
+                                        width: "100%",
+                                        borderEndEndRadius: "6px",
+                                        borderStartEndRadius: "6px",
                                       }}
-                                      placeholder={t("phone_input")}
+                                      {...field}
+                                      placeholder={tForm("phone_number")}
                                     />
                                   </FormControl>
                                   <FormMessage />
