@@ -314,6 +314,7 @@ function HomeComponent() {
                           selected={date}
                           onSelect={setDate}
                           initialFocus
+                          fromDate={new Date()}
                         />
                       </PopoverContent>
                     </Popover>

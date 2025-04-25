@@ -10,6 +10,7 @@ export const SignUpSchema = z
       .string()
       .min(8, "Password must be at least 8 characters"),
     phone: z.string().min(1, "Very short phone").max(60, "Very long phone"),
+    is_staff: z.boolean().optional(),
     title: z.enum(["Mr", "Ms"], {
       required_error: "Please select an option",
     }),

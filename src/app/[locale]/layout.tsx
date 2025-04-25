@@ -38,7 +38,6 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  // Verifica se o locale é válido
   const { locale } = await params;
   const messages: AbstractIntlMessages = await getMessages();
   if (!hasLocale(routing.locales, locale as Locale)) {

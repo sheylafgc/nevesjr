@@ -87,7 +87,9 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
           <InputText
             value={time}
             placeholder="Selecione o horário"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
             readOnly
             LeftComponent={<MdWatch size={18} />}
           />

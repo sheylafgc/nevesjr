@@ -124,9 +124,11 @@ export default function SignUpPage() {
                       <FormControl {...field}>
                         <PhoneInput
                           defaultCountry="gb"
-                          inputStyle={{
-                            width: "100%",
+                          inputClassName="react-international-phone-button"
+                          countrySelectorStyleProps={{
+                            buttonClassName: "react-international-phone-button",
                           }}
+                          placeholder={t("phone_number")}
                           {...field}
                         />
                       </FormControl>

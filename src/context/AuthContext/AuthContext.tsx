@@ -26,7 +26,13 @@ type UserProps = {
 
 export type SignUpProps = Pick<
   SignUpSchemaType,
-  "first_name" | "last_name" | "email" | "password" | "phone" | "title"
+  | "first_name"
+  | "last_name"
+  | "email"
+  | "password"
+  | "phone"
+  | "title"
+  | "is_staff"
 >;
 
 type AuthContextData = {
@@ -172,7 +178,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function signUp(form: SignUpProps) {
     try {
-      await api.post("/user/create", form, {
+      const payload = {
+        ...form,
+        is_staff: false,
+        phone: form.phone.replace(/\D/g, ""),
+      };
+      await api.post("/user/create", payload, {
         headers: {
           "Content-Type": "application/json",
         },

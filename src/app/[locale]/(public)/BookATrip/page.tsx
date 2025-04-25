@@ -816,6 +816,7 @@ function BookATripComponent() {
                                       <PopoverContent className="w-auto p-0">
                                         <Calendar
                                           mode="single"
+                                          fromDate={new Date()}
                                           selected={
                                             formValues.date
                                               ? new Date(formValues.date)
