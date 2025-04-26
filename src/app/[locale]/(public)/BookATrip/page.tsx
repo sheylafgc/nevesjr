@@ -1296,29 +1296,25 @@ function BookATripComponent() {
                         <div>
                           <FaRegCheckCircle size={18} />
                         </div>
-                        <span>
-                          Cancel free of charge up to 1 hour before pickup.
-                        </span>
+                        <span>{t("cancel_free_of_chage")}</span>
                       </div>
                       <div className="flex flex-row items-center justify-center text-sm gap-2 text-gray2">
                         <div>
                           <FaRegCheckCircle size={18} />
                         </div>
-                        <span>
-                          Enjoy 15 minutes of complimentary waiting time.
-                        </span>
+                        <span>{t("enjoy_15_minutes")}</span>
                       </div>
                       <div className="flex flex-row items-center justify-center text-sm gap-2 text-gray2">
                         <div>
                           <FaRegCheckCircle size={18} />
                         </div>
-                        <span>Personal Meet & Greet service included. </span>
+                        <span>{t("personal_meet")}</span>
                       </div>
                       <div className="flex flex-row items-center justify-center text-sm gap-2 text-gray2">
                         <div>
                           <FaRegCheckCircle size={18} />
                         </div>
-                        <span>Complimentary bottled water provided. </span>
+                        <span>{t("complimentary_bottled")}</span>
                       </div>
 
                       <Separator />
@@ -1326,21 +1322,13 @@ function BookATripComponent() {
                         <div>
                           <FaRegCheckCircle size={18} />
                         </div>
-                        <span>
-                          For safety, adhere to guest and luggage capacity
-                          limits. If unsure, choose a larger vehicle class, as
-                          exceeding these limits may result in service refusal.
-                        </span>
+                        <span>{t("for_safety_adhere")}</span>
                       </div>
                       <div className="flex flex-row items-center justify-center text-sm gap-2 text-gray2">
                         <div>
                           <FaRegCheckCircle size={18} />
                         </div>
-                        <span>
-                          For safety, adhere to guest and luggage capacity
-                          limits. If unsure, choose a larger vehicle class, as
-                          exceeding these limits may result in service refusal.
-                        </span>
+                        <span>{t("vehicle_images")}</span>
                       </div>
                     </div>
                   </motion.div>
