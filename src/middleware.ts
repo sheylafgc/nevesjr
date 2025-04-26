@@ -17,6 +17,7 @@ const publicRoutes = [
   { path: "/auth/NewPassword", whenAuthenticated: "redirect" },
   { path: "/auth/RecoverPassword", whenAuthenticated: "redirect" },
   { path: /^\/auth\/NewPassword\/\d+$/, whenAuthenticated: "redirect" },
+  { path: /^\/activate-account(\/|\?|$)/, whenAuthenticated: "redirect" },
   { path: "/About", whenAuthenticated: "next" },
   { path: "/Blog", whenAuthenticated: "next" },
   { path: /^\/BookATrip\d+$/, whenAuthenticated: "next" },

@@ -14,8 +14,8 @@ export default function ReservationCompleted({
 
   return (
     <div className="w-full flex flex-col justify-center items-center h-[450px] bg-white2 rounded-xl">
-      <CiCircleCheck size={80} className="text-gray2 mb-3" />
-      <div className="flex flex-col justify-center items-center gap-3 lg:p-0 p-5">
+      <CiCircleCheck size={80} className="text-gray2 lg:mb-0 mb-3" />
+      <div className="flex flex-col justify-center items-center gap-3 lg:p-10 p-5">
         <h1 className="font-bold text-gray2">{t("reservation_confirmed")}</h1>
         <span className="text-gray2 text-center text-sm">
           {t("reservation_card_detail")}
