@@ -195,8 +195,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
       router.push("/auth/Login");
     } catch (error) {
+      let errorMessage = tToast("an_error_occurred");
       console.log(error);
-      toast.error(tToast("an_error_occurred"), {
+
+      if (
+        error instanceof Error &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response
+      ) {
+        errorMessage =
+          (error.response as { data: { detail?: string } }).data.detail ||
+          errorMessage;
+      } else {
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
