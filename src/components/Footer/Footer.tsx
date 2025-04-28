@@ -28,9 +28,12 @@ export default function Footer({ isLogged }: FooterProps) {
     >
       {isLogged ? (
         <div className="lg:w-[80%] w-[90%] h-full flex lg:flex-row lg:py-0 py-16 flex-col justify-around lg:items-center items-start lg:gap-0 gap-10">
-          <span className="lg:text-sm text-gray2 order-2">
+          <button
+            onClick={() => router.push("/privacy-policy")}
+            className="lg:text-sm text-gray2 order-2"
+          >
             {t("privacy_policy")}
-          </span>
+          </button>
           <span className="lg:text-sm text-gray2 order-3">
             {t("all_rights_reserved")}
           </span>

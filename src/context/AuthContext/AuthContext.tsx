@@ -26,13 +26,7 @@ type UserProps = {
 
 export type SignUpProps = Pick<
   SignUpSchemaType,
-  | "first_name"
-  | "last_name"
-  | "email"
-  | "password"
-  | "phone"
-  | "title"
-  | "is_staff"
+  "first_name" | "last_name" | "email" | "password" | "phone" | "title"
 >;
 
 type AuthContextData = {
@@ -178,9 +172,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function signUp(form: SignUpProps, locale?: string) {
     try {
+      setLoading(true);
       const payload = {
         ...form,
-        is_staff: false,
         phone: form.phone.replace(/\D/g, ""),
       };
       await api.post(`/user/create?lang=${locale}`, payload, {
@@ -213,6 +207,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         theme: "light",
         transition: Bounce,
       });
+    } finally {
+      setLoading(false);
     }
   }
 

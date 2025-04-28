@@ -24,11 +24,12 @@ import {
 import { PasswordInput } from "@/components/PasswordInput/PasswordInput";
 import { useLocale, useTranslations } from "next-intl";
 import { PhoneInput } from "react-international-phone";
+import { ClipLoader } from "react-spinners";
 
 export default function SignUpPage() {
   const t = useTranslations("LoginAndSignUp");
   const locale = useLocale();
-  const { signUp } = useContext(AuthContext);
+  const { signUp, loading } = useContext(AuthContext);
   const form = useForm<SignUpSchemaType>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -51,18 +52,22 @@ export default function SignUpPage() {
     phone,
     title,
   }) => {
-    await signUp(
-      {
-        first_name,
-        last_name,
-        email,
-        password,
-        phone,
-        title,
-      },
-      locale
-    );
-    form.reset();
+    try {
+      await signUp(
+        {
+          first_name,
+          last_name,
+          email,
+          password,
+          phone,
+          title,
+        },
+        locale
+      );
+      form.reset();
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="w-full h-auto py-32 flex justify-center items-center lg:bg-white bg-white2">
@@ -208,7 +213,11 @@ export default function SignUpPage() {
                   className="rounded-full w-full lg:py-0 py-7"
                   type="submit"
                 >
-                  {t("sign_up")}
+                  {loading ? (
+                    <ClipLoader size={20} color="white" />
+                  ) : (
+                    t("sign_up")
+                  )}
                 </Button>
               </div>
             </form>
