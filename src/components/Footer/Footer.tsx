@@ -47,10 +47,7 @@ export default function Footer({ isLogged }: FooterProps) {
           <div className="flex lg:flex-row flex-col justify-between lg:items-center items-start lg:gap-0 gap-10 mb-10">
             <Image src={LogoWhite} alt="NevesJr Logo" />
             <p className="lg:hidden text-gray1 font-light text-xs">
-              Trust Neves JR for a journey that blends quality, safety, and
-              reliability. With unparalleled service and professionalism, we’re
-              here to exceed your expectations every mile. Your satisfaction
-              drives us.
+              {t("message")}
             </p>
             <div className="lg:hidden h-[1px] bg-gray1/50 w-full" />
             <div className="flex flex-col lg:gap-1 gap-10">

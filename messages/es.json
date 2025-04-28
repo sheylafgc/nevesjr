@@ -58,8 +58,9 @@
     "nav6": "Iniciar sesión",
     "company": "Empresa",
     "company_name": "NevesJR Servicios Ejecutivos",
-    "all_rights_reserved": "NevesJR - Todos los Derechos Reservados - 2024",
-    "privacy_policy": "Política de Privacidad"
+    "all_rights_reserved": "NevesJR - Todos los Derechos Reservados - 2025",
+    "privacy_policy": "Política de Privacidad",
+    "message": "Confíe en Neves JR para un viaje que combina calidad, seguridad y fiabilidad. Con un servicio y profesionalismo inigualables, estamos aquí para superar sus expectativas en cada kilómetro. Su satisfacción es nuestra motivación."
   },
   "BlogsPage": {
     "filter_blogs": "Filtrar Blogs",
@@ -112,6 +113,7 @@
     "past": "Pasadas",
     "canceled": "Canceladas",
     "book_new_trip": "Reservar nuevo viaje",
+    "you_dont_have_trips": "No tienes ningún viaje programado.",
     "from": "Desde",
     "to": "Hasta",
     "date": "Fecha",

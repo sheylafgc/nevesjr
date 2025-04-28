@@ -58,8 +58,9 @@
     "nav6": "Sign In",
     "company": "Company",
     "company_name": "NevesJR Executive Services",
-    "all_rights_reserved": "NevesJR - All Rights Reserved - 2024",
-    "privacy_policy": "Privacy Policy"
+    "all_rights_reserved": "NevesJR - All Rights Reserved - 2025",
+    "privacy_policy": "Privacy Policy",
+    "message": "Trust Neves JR for a journey that blends quality, safety, and reliability. With unparalleled service and professionalism, we’re here to exceed your expectations every mile. Your satisfaction drives us."
   },
   "BlogsPage": {
     "filter_blogs": "Filter Blogs",
@@ -112,6 +113,7 @@
     "past": "Past",
     "canceled": "Canceled",
     "book_new_trip": "Book new trip",
+    "you_dont_have_trips": "You don’t have any scheduled trips.",
     "from": "From",
     "to": "To",
     "date": "Date",

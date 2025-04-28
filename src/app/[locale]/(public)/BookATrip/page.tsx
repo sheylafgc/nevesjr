@@ -138,6 +138,7 @@ function BookATripComponent() {
   const durationParam: string | null = searchParams.get("duration");
   const dateParam: string | null = searchParams.get("date");
   const timeParam: string | null = searchParams.get("time");
+  const carParam: string | null = searchParams.get("carId");
   const fromRef = useRef(null);
   const toRef = useRef(null);
 
@@ -172,6 +173,7 @@ function BookATripComponent() {
     form.setValue("duration", durationParam || "");
     form.setValue("date", dateParam || "");
     form.setValue("hour", timeParam || "Mr");
+    form.setValue("vehicle", Number(carParam));
   }, [searchParams]);
 
   const [distance, setDistance] = useState<string | null>(null);
@@ -543,17 +545,17 @@ function BookATripComponent() {
         <div className="lg:w-[60%] w-[90%] flex flex-col justify-between pt-40 pb-20">
           <ReservationCompleted
             onClick={() => {
+              router.push("/BookATrip");
               form.reset();
               setCurrentStep(0);
               setChecked(false);
+
               setPaymentSuccessful(false);
-              router.push("/BookATrip");
             }}
           />
         </div>
       ) : (
         <section className="lg:w-[80%] w-[90%] flex flex-col justify-between lg:p-24 py-32">
-          {/* steps */}
           <div className="w-full px-5 mt-10 py-10 bg-white2 rounded-xl">
             <Stepper
               className="w-full"
@@ -1290,6 +1292,14 @@ function BookATripComponent() {
                       <span className="text-gray2 text-sm">
                         +{user ? user.phone : formValues.phone_number}
                       </span>
+                      {formValues.notes && (
+                        <>
+                          <Separator />
+                          <span className="text-gray2 text-sm">
+                            {formValues.notes}
+                          </span>
+                        </>
+                      )}
                     </div>
                     <div className="w-full bg-white2 flex rounded-xl flex-col justify-between items-start p-10 space-y-5">
                       <div className="flex flex-row items-center justify-center text-sm gap-2 text-gray2">

@@ -684,7 +684,10 @@ function HomeComponent() {
                   {car.quantity_luggage}
                 </span>
               </div>
-              <Button className="px-4 bg-transparent border border-gray2 rounded-full text-gray2 hover:text-gray1 lg:mt-0 mt-8">
+              <Button
+                onClick={() => router.push(`/BookATrip?carId=${car.id}`)}
+                className="px-4 bg-transparent border border-gray2 rounded-full text-gray2 hover:text-gray1 lg:mt-0 mt-8"
+              >
                 {tButton("button_book_now")}
               </Button>
             </div>

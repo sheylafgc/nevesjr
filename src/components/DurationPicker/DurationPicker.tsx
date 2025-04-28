@@ -23,11 +23,13 @@ export default function DurationPicker({
   const [hours, setHours] = useState(1);
   const [minutes, setMinutes] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [displayValue, setDisplayValue] = useState("");
 
   const handleConfirm = () => {
     const formattedTime = `${hours}:${
       minutes < 10 ? "0" + minutes : minutes
     }:00`;
+    setDisplayValue(`${hours}:${minutes < 10 ? "0" + minutes : minutes}`);
     onTimeChange(formattedTime);
     setIsOpen(false);
   };
@@ -37,7 +39,7 @@ export default function DurationPicker({
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <InputText
-            value={`${hours}:${minutes < 10 ? "0" + minutes : minutes}`}
+            value={displayValue}
             placeholder="Selecione a duração"
             onClick={() => setIsOpen(!isOpen)}
             readOnly
@@ -75,7 +77,7 @@ export default function DurationPicker({
               </Select>
             </div>
             <Button onClick={handleConfirm} className="mt-4">
-              Confirm
+              Confirmar
             </Button>
           </div>
         </PopoverContent>

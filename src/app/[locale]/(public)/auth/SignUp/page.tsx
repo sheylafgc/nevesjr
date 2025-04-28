@@ -51,22 +51,17 @@ export default function SignUpPage() {
     phone,
     title,
   }) => {
-    console.log({
-      first_name,
-      last_name,
-      email,
-      password,
-      phone,
-      title,
-    });
-    await signUp({
-      first_name,
-      last_name,
-      email,
-      password,
-      phone,
-      title,
-    });
+    await signUp(
+      {
+        first_name,
+        last_name,
+        email,
+        password,
+        phone,
+        title,
+      },
+      locale
+    );
     form.reset();
   };
   return (

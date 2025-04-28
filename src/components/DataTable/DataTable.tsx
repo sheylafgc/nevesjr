@@ -17,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import Link from "next/link";
 import { Button } from "../ui/button";
 import { FiFilter } from "react-icons/fi";
 import {
@@ -39,6 +38,7 @@ import {
 import { Input } from "../ui/input";
 import { Calendar } from "../ui/calendar";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/src/i18n/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -51,6 +51,7 @@ export default function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const t = useTranslations("InternalPage");
   const tButton = useTranslations("Buttons");
+  const router = useRouter();
   const [pageIndex, setPageIndex] = useState(0);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -101,11 +102,12 @@ export default function DataTable<TData, TValue>({
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="w-full flex flex-row justify-between items-center py-5">
-        <Link href={"/BookATrip"}>
-          <button className="px-8 py-3 text-xs text-white bg-black rounded-full hover:opacity-85">
-            {t("book_new_trip")}
-          </button>
-        </Link>
+        <button
+          onClick={() => router.push("/BookATrip")}
+          className="px-8 py-3 text-xs text-white bg-black rounded-full hover:opacity-85"
+        >
+          {t("book_new_trip")}
+        </button>
         <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
           <DialogTrigger className="px-11 py-3 flex justify-center items-center gap-2 text-xs text-black shadow-none bg-gray1 rounded-full hover:bg-gray2 hover:text-white">
             <FiFilter size={18} />
@@ -210,7 +212,6 @@ export default function DataTable<TData, TValue>({
             >
               <MdOutlineArrowBackIos size={20} />
             </button>
-            {/* Navegação de páginas */}
             {Array.from({ length: totalPages }, (_, index) => (
               <Button
                 key={index}
@@ -242,13 +243,14 @@ export default function DataTable<TData, TValue>({
             alt="No Bookings Image"
           />
           <p className="text-gray2 text-xs font-bold">
-            You don’t have any scheduled trips.
+            {t("you_dont_have_trips")}
           </p>
-          <Link href={"/BookATrip"}>
-            <button className="px-8 py-3 text-xs text-white bg-black rounded-full hover:opacity-85">
-              Book new trip
-            </button>
-          </Link>
+          <button
+            onClick={() => router.push("/BookATrip")}
+            className="px-8 py-3 text-xs text-white bg-black rounded-full hover:opacity-85"
+          >
+            {t("book_new_trip")}
+          </button>
         </div>
       )}
     </div>

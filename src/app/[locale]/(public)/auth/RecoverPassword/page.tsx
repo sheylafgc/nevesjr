@@ -15,10 +15,11 @@ import { FaArrowLeft } from "react-icons/fa";
 import { RecoverSchema, RecoverSchemaType } from "./RecoverSchema";
 import { api } from "@/src/api/api";
 import { useRouter } from "@/src/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function RecoverPasswordPage() {
   const t = useTranslations("LoginAndSignUp");
+  const locale = useLocale();
   const form = useForm<RecoverSchemaType>({
     resolver: zodResolver(RecoverSchema),
     defaultValues: {
@@ -34,7 +35,7 @@ export default function RecoverPasswordPage() {
   async function sendCode(email: string) {
     setLoading(true);
     try {
-      await api.post(`create/forgot-password/?email=${email}`);
+      await api.post(`create/forgot-password/?email=${email}&lang=${locale}`);
       setIsEmailSent(true);
     } catch (error) {
       console.error(error);

@@ -41,7 +41,7 @@ type AuthContextData = {
   getUserBookings: () => Promise<void>;
   signIn: (data: LoginSchemaType, isOnBookATrip?: boolean) => Promise<void>;
   signInForBook: (data: LoginSchemaType) => Promise<void>;
-  signUp: (data: SignUpProps) => Promise<void>;
+  signUp: (data: SignUpProps, locale?: string) => Promise<void>;
   signOut: () => void;
   loading: boolean;
 };
@@ -176,14 +176,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  async function signUp(form: SignUpProps) {
+  async function signUp(form: SignUpProps, locale?: string) {
     try {
       const payload = {
         ...form,
         is_staff: false,
         phone: form.phone.replace(/\D/g, ""),
       };
-      await api.post("/user/create", payload, {
+      await api.post(`/user/create?lang=${locale}`, payload, {
         headers: {
           "Content-Type": "application/json",
         },
