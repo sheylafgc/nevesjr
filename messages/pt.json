@@ -62,6 +62,11 @@
     "privacy_policy": "Política de Privacidade",
     "message": "Confie na Neves JR para uma jornada que combina qualidade, segurança e confiabilidade. Com serviço e profissionalismo incomparáveis, estamos aqui para superar suas expectativas a cada milha. Sua satisfação é o que nos move."
   },
+  "TimeComponents": {
+    "select_duration": "Selecione a duração",
+    "select_hour": "Selecione o horário",
+    "confirm": "Confirmar"
+  },
   "BlogsPage": {
     "filter_blogs": "Filtrar Blogs",
     "by_category": "Filtrar blogs por categoria",

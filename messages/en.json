@@ -62,6 +62,11 @@
     "privacy_policy": "Privacy Policy",
     "message": "Trust Neves JR for a journey that blends quality, safety, and reliability. With unparalleled service and professionalism, we’re here to exceed your expectations every mile. Your satisfaction drives us."
   },
+  "TimeComponents": {
+    "select_duration": "Select duration",
+    "select_hour": "Select time",
+    "confirm": "Confirm"
+  },
   "BlogsPage": {
     "filter_blogs": "Filter Blogs",
     "by_category": "Filter blogs by category",

@@ -66,7 +66,7 @@ export default function SignUpPage() {
       );
       form.reset();
     } catch (error) {
-      console.error(error);
+      console.error("erro aki=>", error);
     }
   };
   return (

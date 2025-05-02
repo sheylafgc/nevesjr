@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useTranslations } from "next-intl";
 
 interface DurationPickerProps extends ComponentProps<"input"> {
   onTimeChange: (time: string) => void;
@@ -20,6 +21,7 @@ export default function DurationPicker({
   onTimeChange,
   className,
 }: DurationPickerProps) {
+  const t = useTranslations("TimeComponents");
   const [hours, setHours] = useState(1);
   const [minutes, setMinutes] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function DurationPicker({
         <PopoverTrigger asChild>
           <InputText
             value={displayValue}
-            placeholder="Selecione a duração"
+            placeholder={t("select_duration")}
             onClick={() => setIsOpen(!isOpen)}
             readOnly
             LeftComponent={<TbClockPin size={18} />}
@@ -77,7 +79,7 @@ export default function DurationPicker({
               </Select>
             </div>
             <Button onClick={handleConfirm} className="mt-4">
-              Confirmar
+              {t("confirm")}
             </Button>
           </div>
         </PopoverContent>

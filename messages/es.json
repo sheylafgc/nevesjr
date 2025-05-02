@@ -62,6 +62,11 @@
     "privacy_policy": "Política de Privacidad",
     "message": "Confíe en Neves JR para un viaje que combina calidad, seguridad y fiabilidad. Con un servicio y profesionalismo inigualables, estamos aquí para superar sus expectativas en cada kilómetro. Su satisfacción es nuestra motivación."
   },
+  "TimeComponents": {
+    "select_duration": "Seleccionar duración",
+    "select_hour": "Seleccionar hora",
+    "confirm": "Confirmar"
+  },
   "BlogsPage": {
     "filter_blogs": "Filtrar Blogs",
     "by_category": "Filtrar blogs por categoría",

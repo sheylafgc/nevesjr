@@ -12,12 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useTranslations } from "next-intl";
 
 interface TimePickerProps {
   onChange: (time: string) => void;
 }
 
 const TimePicker = ({ onChange }: TimePickerProps) => {
+  const t = useTranslations("TimeComponents");
   const [hours, setHours] = useState<string>("");
   const [minutes, setMinutes] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
@@ -86,7 +88,7 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
         <PopoverTrigger asChild>
           <InputText
             value={time}
-            placeholder="Selecione o horário"
+            placeholder={t("select_hour")}
             onClick={() => {
               setIsOpen(!isOpen);
             }}
@@ -142,7 +144,7 @@ const TimePicker = ({ onChange }: TimePickerProps) => {
               onClick={handleConfirm}
               className="mt-4"
             >
-              Confirmar
+              {t("confirm")}
             </Button>
           </div>
         </PopoverContent>
