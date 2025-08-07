@@ -11,6 +11,7 @@ import Loading from "../Loading/Loading";
 import { useLocale, useTranslations } from "next-intl";
 import { getSocialMedia } from "@/src/domain/Content/SociaMedia";
 import { BlogProps } from "@/src/domain/Blog/BlogService";
+import HtmlRerender from "../HtmlRerender/HtmlRerender";
 
 export default function BlogPageComponent() {
   const tToast = useTranslations("Toasts");
@@ -27,12 +28,17 @@ export default function BlogPageComponent() {
   } = useQuery({
     queryKey: ["getBlogPage", blogId, locale],
     queryFn: async () => {
-      if (!blogId) return null;
+      // if (!blogId) return null;
+      if (!blogId) {
+        console.log("No blogId, queryFn skipped");
+        return null;
+      }
 
       try {
         const { data } = await api.get<BlogProps>(
           `/blog/${blogId}/?lang=${locale}`
         );
+        console.log("DATA", data);
         return data;
       } catch (err) {
         console.error("Failed to fetch blog:", err);
@@ -150,9 +156,10 @@ export default function BlogPageComponent() {
         />
 
         <div className="w-full my-16 space-y-5">
-          <p className="text-black text-sm whitespace-pre-line">
-            {blogDetails.description}
-          </p>
+          <HtmlRerender
+            htmlString={blogDetails.description || ""}
+            className="text-black text-sm whitespace-pre-line"
+          />
         </div>
       </div>
 
