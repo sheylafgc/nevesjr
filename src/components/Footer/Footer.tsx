@@ -9,8 +9,10 @@ import { FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
+import { getSocialMedia } from "@/src/domain/Content/SociaMedia";
+import { useQuery } from "@tanstack/react-query";
 
 interface FooterProps {
   isLogged?: boolean;
@@ -19,6 +21,24 @@ interface FooterProps {
 export default function Footer({ isLogged }: FooterProps) {
   const t = useTranslations("Footer");
   const router = useRouter();
+  const locale = useLocale();
+
+  const { data: socialMedia } = useQuery({
+    queryKey: ["getSocialMediaContent", locale],
+    queryFn: () => getSocialMedia({ locale }),
+  });
+
+  const twitter = socialMedia?.find(
+    (media) => media.label.toLowerCase() === "twitter"
+  );
+
+  const facebook = socialMedia?.find(
+    (media) => media.label.toLowerCase() === "facebook"
+  );
+
+  const instagram = socialMedia?.find(
+    (media) => media.label.toLowerCase() === "instagram"
+  );
 
   return (
     <footer
@@ -109,13 +129,22 @@ export default function Footer({ isLogged }: FooterProps) {
                 {t("follow_us")}
               </span>
               <div className="flex flex-row gap-3">
-                <Link href={"#"} className="p-2 bg-gray1 rounded-full">
+                <Link
+                  href={facebook?.value || "#"}
+                  className="p-2 bg-gray1 rounded-full"
+                >
                   <FaFacebookF size={18} />
                 </Link>
-                <Link href={"#"} className="p-2 bg-gray1 rounded-full">
+                <Link
+                  href={twitter?.value || "#"}
+                  className="p-2 bg-gray1 rounded-full"
+                >
                   <FaXTwitter size={18} />
                 </Link>
-                <Link href={"#"} className="p-2 bg-gray1 rounded-full">
+                <Link
+                  href={instagram?.value || "#"}
+                  className="p-2 bg-gray1 rounded-full"
+                >
                   <FaInstagram size={18} />
                 </Link>
               </div>
